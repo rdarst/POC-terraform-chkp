@@ -1231,9 +1231,9 @@ func(c *Client) SetAccessRulebaseList(accessrulebase AccessRulebaseList) ([]byte
 }
 
 
-func(c *Client) ShowAccessRulebaseList(accessrulebaselayer string) ([]byte, error) {
+func(c *Client) ShowAccessRulebaseList(accessrulebaselayer string,limit int, offset int) ([]byte, error) {
 
-  var jsonStr = []byte(fmt.Sprintf(`{"name": "%v", "details-level" : "standard", "use-object-dictionary" : false}`, accessrulebaselayer))
+  var jsonStr = []byte(fmt.Sprintf(`{"name": "%v", "details-level" : "standard", "use-object-dictionary" : false, "limit" : %v, "offset" : %v}`, accessrulebaselayer, limit, offset))
 
 	req, err := http.NewRequest("POST", c.base+"/show-access-rulebase", bytes.NewBuffer(jsonStr))
 	req.Header.Set("Content-Type", "application/json")

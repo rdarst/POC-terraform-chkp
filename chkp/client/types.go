@@ -12,7 +12,7 @@ type LoginResponse struct {
 }
 
 type APIError struct {
-	Code        string 
+	Code        string
 	Message     string
 }
 
@@ -84,6 +84,7 @@ type PolicyPackage struct {
 type AccessLayer struct {
 	Uid                  string              `json:"uid,omitempty"`
 	Name                 string              `json:"name,omitempty"`
+	Newname				       string			      	 `json:"new-name,omitempty"`
 	AppAndUrl            bool                `json:"application-and-url-filtering,omitempty"`
 	ContentAwareness     bool			           `json:"content-awareness,omitempty"`
 	Firewall             bool			           `json:"firewall,omitempty"`
