@@ -56,6 +56,11 @@ func resourceAccessRulebaseList() *schema.Resource {
                           Optional: true,
                           Computed: true,
                   },
+                  "layeruid": {
+                          Type:     schema.TypeString,
+                          Optional: true,
+                          Computed: true,
+                  },
 
 						            "rulebase": {
                           Type:     schema.TypeList,
@@ -170,7 +175,8 @@ func resourceAccessRulebaseListCreate(d *schema.ResourceData, meta interface{}) 
 		return err
 	}
   layer := d.Get("name").(string)+" Network"
-  //d.Set("layername", layer)
+  layeruid, err := client.ReadLayerNametoUID(layer)
+  d.Set("layeruid", layeruid)
   //Get Default Cleanup rule UID that was just created
   getcleanupid, err := client.ShowAccessRulebaseByName("Cleanup rule", layer)
   readLayer := chkp.AccessLayer{}
@@ -179,7 +185,6 @@ func resourceAccessRulebaseListCreate(d *schema.ResourceData, meta interface{}) 
   if err != nil {
 		return err
 	}
-
 
   // Pull in Rulebase rules
   layerlist :=d.Get("rulebase").([]interface{})
@@ -293,9 +298,10 @@ func resourceAccessRulebaseListRead(d *schema.ResourceData, meta interface{}) er
 	if err != nil {
 		return err
 	}
-
+  // Set API limit on the number of records returned default is 50 max is 500
+  limit := 100
   layer := d.Get("name").(string)+" Network"
-  id2, err := client.ShowAccessRulebaseList(layer)
+  id2, err := client.ShowAccessRulebaseList(layer, limit, 0)
 
   readAccessRulebase := chkp.AccessRulebaseResultRead{}
   json.Unmarshal(id2, &readAccessRulebase)
@@ -304,10 +310,45 @@ func resourceAccessRulebaseListRead(d *schema.ResourceData, meta interface{}) er
   json.Unmarshal(id2, &result)
 
   rules := result["rulebase"].([]interface{})
+  total := readAccessRulebase.Total
+  to := readAccessRulebase.To
+  //from := readAccessRulebase.From
+  offset := to
+
+  rulelistread := make([]interface{}, 0, total)
+  for t := range rules {
+    rulelistread = append(rulelistread, rules[t].(map[string]interface{}))
+  }
+  // Check to see if we need to gather more rules
+  if total > to {
+  done := 0
+  for done < 1 {
+    id3, err := client.ShowAccessRulebaseList(layer, limit, offset)
+    var resultappend map[string]interface{}
+    readAccessRulebaseappend := chkp.AccessRulebaseResultRead{}
+    json.Unmarshal(id3, &resultappend)
+    json.Unmarshal(id3, &readAccessRulebaseappend)
+    rules := resultappend["rulebase"].([]interface{})
+    for t := range rules {
+      rulelistread = append(rulelistread, rules[t].(map[string]interface{}))
+    }
+    if err != nil {
+  		return err
+  	}
+    total = readAccessRulebaseappend.Total
+    to = readAccessRulebaseappend.To
+    offset = to
+
+    if total == to { done = 2}
+    //done = 2
+      }
+    }
+
+  // build the interface for the rule list
   rulelist := make([]interface{}, 0, len(rules))
 
-  for q := range rules {
-    ruleelement := rules[q].(map[string]interface{})
+  for q := range rulelistread {
+    ruleelement := rulelistread[q].(map[string]interface{})
 
           layerreturn := make(map[string]interface{})
           layerreturn["uid"] = ruleelement["uid"]
@@ -358,7 +399,6 @@ func resourceAccessRulebaseListRead(d *schema.ResourceData, meta interface{}) er
           layerreturn["service"] = client.ConvertListtoSet(services)
 
           // Tracklist
-
           track := ruleelement["track"]
           tracklist := track.(map[string]interface{})
           tracks := &chkp.Track{
@@ -409,8 +449,18 @@ func resourceAccessRulebaseListUpdate(d *schema.ResourceData, meta interface{}) 
   updatepolicy = true}
 	if d.HasChange("uid") {policypackage.Uid = d.Get("uid").(string)
   updatepolicy = true}
+  // If the Policy Name changes update the Layer name to match
   if d.HasChange("name") {policypackage.Newname = d.Get("name").(string)
-  updatepolicy = true}
+  updatepolicy = true
+  var accesslayer = chkp.AccessLayer{}
+  accesslayer.Newname = d.Get("name").(string)+" Network"
+  accesslayer.Uid = d.Get("layeruid").(string)
+	id, err := client.SetAccessLayer(accesslayer)
+  _ = id
+  if err != nil {
+    return err
+   }
+  }
 
   if updatepolicy  {
   policypackage.Uid = d.Get("uid").(string)
