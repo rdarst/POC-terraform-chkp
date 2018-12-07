@@ -369,7 +369,7 @@ func resourceAccessRulebaseListRead(d *schema.ResourceData, meta interface{}) er
           for i := range sourcelist {
                 sourceelements := sourcelist[i].(map[string]interface{})
                 if sourceelements["name"] != "Any" {
-                sources = append(sources, sourceelements["uid"].(string))
+                sources = append(sources, sourceelements["name"].(string))
                   }
                 }
           layerreturn["source"] = client.ConvertListtoSet(sources)
@@ -381,7 +381,7 @@ func resourceAccessRulebaseListRead(d *schema.ResourceData, meta interface{}) er
           for i := range destinationlist {
                 destinationelements := destinationlist[i].(map[string]interface{})
                 if destinationelements["name"] != "Any" {
-                    destinations = append(destinations, destinationelements["uid"].(string))
+                    destinations = append(destinations, destinationelements["name"].(string))
                   }
                 }
           layerreturn["destination"] = client.ConvertListtoSet(destinations)
@@ -393,7 +393,7 @@ func resourceAccessRulebaseListRead(d *schema.ResourceData, meta interface{}) er
           for i := range servicelist {
                 serviceelements := servicelist[i].(map[string]interface{})
                 if serviceelements["name"] != "Any" {
-                    services = append(services, serviceelements["uid"].(string))
+                    services = append(services, serviceelements["name"].(string))
                   }
                 }
           layerreturn["service"] = client.ConvertListtoSet(services)
