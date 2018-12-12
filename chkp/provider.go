@@ -35,6 +35,7 @@ func Provider() terraform.ResourceProvider {
                         "chkp_accesssection": resourceAccessSection(),
                         "chkp_dyanmicobject": resourceDynamicObject(),
                         "chkp_accessrulebaselist": resourceAccessRulebaseList(),
+                        "chkp_accessnatlist": resourceAccessNatRuleList(),
                         "chkp_addressrange": resourceAddressRange(),
 
                 },
