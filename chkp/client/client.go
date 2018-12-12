@@ -1256,6 +1256,32 @@ func(c *Client) ShowAccessRulebaseList(accessrulebaselayer string,limit int, off
 	return body, err
 }
 
+func(c *Client) ShowNATRulebaseList(packageuid string,limit int, offset int) ([]byte, error) {
+
+  var jsonStr = []byte(fmt.Sprintf(`{"package": "%v", "details-level" : "standard", "use-object-dictionary" : false, "limit" : %v, "offset" : %v}`, packageuid, limit, offset))
+
+	req, err := http.NewRequest("POST", c.base+"/show-nat-rulebase", bytes.NewBuffer(jsonStr))
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("X-chkp-sid", c.sid)
+	req.Header.Set("Accept", "application/json")
+	resp, err := c.client.Do(req)
+  //If object is not found 404 is sent
+	if resp.StatusCode == 404 {
+		return nil, err
+	}
+	if resp.StatusCode >= 400 {
+		var errorreturn APIError
+		body, _ := ioutil.ReadAll(resp.Body)
+		json.Unmarshal([]byte(body), &errorreturn)
+		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
+	}
+
+	defer resp.Body.Close()
+	body, _ := ioutil.ReadAll(resp.Body)
+	return body, err
+}
+
+
 func(c *Client) CreateAccessSection(accesssection AccessSection) ([]byte, error) {
 
 	spotBytes, _ := json.Marshal(accesssection)
@@ -1465,6 +1491,29 @@ func(c *Client) ReadLayerNametoUID(layername string) (string, error) {
 	return accesslayeruid, err
 }
 
+func(c *Client) CreateNATSection(packagename string, position string, name string) (string, error) {
+
+  var jsonStr = []byte(fmt.Sprintf(`{"package": "%v", "position": "%v", "name": "%v"}`, packagename, position, name))
+	req, err := http.NewRequest("POST", c.base+"/add-nat-section", bytes.NewBuffer(jsonStr))
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("X-chkp-sid", c.sid)
+	req.Header.Set("Accept", "application/json")
+	resp, err := c.client.Do(req)
+	if resp.StatusCode >= 400 {
+		var errorreturn APIError
+		body, _ := ioutil.ReadAll(resp.Body)
+		json.Unmarshal([]byte(body), &errorreturn)
+		return "", fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
+	}
+
+	defer resp.Body.Close()
+	body, _ := ioutil.ReadAll(resp.Body)
+	natsection := NATSection{}
+  json.Unmarshal(body, &natsection)
+	natsectionuid := natsection.Uid
+	return natsectionuid, err
+}
+
 func(c *Client) Publish(sid string) (string, error) {
 
 	var jsonStr = []byte(`{}`)
@@ -1526,6 +1575,89 @@ func(c *Client) Logout() (string, error) {
 	defer resp.Body.Close()
 
 	return "1", err
+}
+
+func(c *Client) CreateAccessNATRulebaseList(natrulebase AccessRulebaseNATList) ([]byte, error) {
+
+	spotBytes, _ := json.Marshal(natrulebase)
+	spotReader := bytes.NewReader(spotBytes)
+
+	req, err := http.NewRequest("POST", c.base+"/add-nat-rule", spotReader)
+
+	if err != nil {
+		return nil, errors.New("Sorry something went wrong.  API busy??")
+	}
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("X-chkp-sid", c.sid)
+	req.Header.Set("Accept", "application/json")
+	resp, err := c.client.Do(req)
+	if resp.StatusCode >= 400 {
+		var errorreturn APIError
+		body, _ := ioutil.ReadAll(resp.Body)
+		json.Unmarshal([]byte(body), &errorreturn)
+		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
+	}
+
+	defer resp.Body.Close()
+
+	body, _ := ioutil.ReadAll(resp.Body)
+
+	return body, err
+}
+
+func(c *Client) SetAccessNATRulebaseList(natrulebase AccessRulebaseNATListSet) ([]byte, error) {
+
+	spotBytes, _ := json.Marshal(natrulebase)
+	spotReader := bytes.NewReader(spotBytes)
+
+	req, err := http.NewRequest("POST", c.base+"/set-nat-rule", spotReader)
+
+	if err != nil {
+		return nil, errors.New("Sorry something went wrong.  API busy??")
+	}
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("X-chkp-sid", c.sid)
+	req.Header.Set("Accept", "application/json")
+	resp, err := c.client.Do(req)
+	if resp.StatusCode >= 400 {
+		var errorreturn APIError
+		body, _ := ioutil.ReadAll(resp.Body)
+		json.Unmarshal([]byte(body), &errorreturn)
+		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
+	}
+
+	defer resp.Body.Close()
+
+	body, _ := ioutil.ReadAll(resp.Body)
+
+	return body, err
+}
+
+func(c *Client) DeleteAccessNATRule(uid string, packageuid string) ([]byte, error) {
+
+	var jsonStr = []byte(fmt.Sprintf(`{"uid": "%v", "package": "%v"}`, uid, packageuid))
+	req, err := http.NewRequest("POST", c.base+"/delete-nat-rule", bytes.NewBuffer(jsonStr))
+
+
+	if err != nil {
+		return nil, errors.New("Sorry something went wrong.  API busy??")
+	}
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("X-chkp-sid", c.sid)
+	req.Header.Set("Accept", "application/json")
+	resp, err := c.client.Do(req)
+	if resp.StatusCode >= 400 {
+		var errorreturn APIError
+		body, _ := ioutil.ReadAll(resp.Body)
+		json.Unmarshal([]byte(body), &errorreturn)
+		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
+	}
+
+	defer resp.Body.Close()
+
+	body, _ := ioutil.ReadAll(resp.Body)
+
+	return body, err
 }
 
 func(c *Client) ConvertListtoSet(listelements []string) *schema.Set {

@@ -156,6 +156,38 @@ type AccessRulebaseList struct {
 	Service              []string            `json:"service,omitempty"`
 }
 
+type AccessRulebaseNATList struct {
+	Uid                  string              `json:"uid,omitempty"`
+	Package              string              `json:"package,omitempty"`
+	Position			            			 	       `json:"position,omitempty"`
+	Enabled	    		     bool		    	       `json:"enabled"`
+  Installon			       []string		 	       `json:"install-on,omitempty"`
+	Method    	         string			 	       `json:"method,omitempty"`
+	OriginalSource       string			 	       `json:"original-source"`
+  OriginalService      string              `json:"original-service"`
+	OriginalDestination  string              `json:"original-destination"`
+	TranslatedSource       string			 	       `json:"translated-source"`
+  TranslatedService      string              `json:"translated-service"`
+	TranslatedDestination  string              `json:"translated-destination"`
+	Comments  string                         `json:"comments"`
+}
+
+type AccessRulebaseNATListSet struct {
+	Uid                  string              `json:"uid,omitempty"`
+	Package              string              `json:"package,omitempty"`
+	Enabled	    		     bool		    	       `json:"enabled"`
+  Installon			       []string		 	       `json:"install-on,omitempty"`
+	Method    	         string			 	       `json:"method,omitempty"`
+	OriginalSource       string			 	       `json:"original-source"`
+  OriginalService      string              `json:"original-service"`
+	OriginalDestination  string              `json:"original-destination"`
+	TranslatedSource       string			 	       `json:"translated-source"`
+  TranslatedService      string              `json:"translated-service"`
+	TranslatedDestination  string              `json:"translated-destination"`
+	Comments  string                         `json:"comments"`
+}
+
+
 type AccessRulebaseResultRead struct {
 	Uid                  string              `json:"uid,omitempty"`
 	Name                 string              `json:"name,omitempty"`
@@ -165,11 +197,28 @@ type AccessRulebaseResultRead struct {
 	AccessRulebaseResult 										 `json:"rulebase,omitempty"`
 }
 
+type NATRulebaseResultRead struct {
+	Uid                  string              `json:"uid,omitempty"`
+	From 	               int                 `json:"from,omitempty"`
+	To 	                 int                 `json:"to,omitempty"`
+	Total 	             int                 `json:"total,omitempty"`
+	ShowNATRulebaseResult 	 		 		   			 `json:"rulebase,omitempty"`
+}
+
 type AccessSection struct {
 	Uid                  string              `json:"uid,omitempty"`
 	Name                 string              `json:"name,omitempty"`
 	Layer                string              `json:"layer,omitempty"`
 	Position			            			 	       `json:"position,omitempty"`
+	Newname				       string			 	       `json:"new-name,omitempty"`
+}
+
+type NATSection struct {
+	Uid                  string              `json:"uid,omitempty"`
+	Name                 string              `json:"name,omitempty"`
+	Layer                string              `json:"layer,omitempty"`
+	Package              string              `json:package`
+	Position			       string  		 	       `json:"position,omitempty"`
 	Newname				       string			 	       `json:"new-name,omitempty"`
 }
 
@@ -219,6 +268,47 @@ type AccessRulebaseResult struct {
 					Service                                  `json:"service,omitempty"`
 				}
 
+type ShowNATRulebaseResult struct {
+					Uid                  string              `json:"uid,omitempty"`
+					Name                 string              `json:"name,omitempty"`
+					Type                 string              `json:"type,omitempty"`
+				  From  			         int	  		 	       `json:"from,omitempty"`
+					To    			         int	  		 	       `json:"to,omitempty"`
+					NATRulebase                              `json:"rulebase,omitempty"`
+				}
+
+type NATRulebase struct {
+					Uid                  string              `json:"uid,omitempty"`
+			    Method               string              `json:"method,omitempty"`
+					Type                 string              `json:"type,omitempty"`
+					RuleNumber  			   int	  		 	       `json:"rule-number,omitempty"`
+				  From  			         int	  		 	       `json:"from,omitempty"`
+					To    			         int	  		 	       `json:"to,omitempty"`
+					OriginalDestination                      `json:"original-destination,omitempty"`
+					OriginalSource                           `json:"original-source,omitempty"`
+					OriginalService			                     `json:"original-service,omitempty"`
+					TranslatedDestination                    `json:"translated-destination,omitempty"`
+					TranslatedSource                         `json:"translated-source,omitempty"`
+					TranslatedService                        `json:"translated-service,omitempty"`
+					Installon                                `json:"install-on,omitempty"`
+					Enabled	    		     bool		    	       `json:"enabled"`
+        	Comments				     string			 	       `json:"comments,omitempty"`
+				}
+
+type NATRulebaseResult struct {
+					Uid                  string              `json:"uid,omitempty"`
+					Method               string              `json:"method,omitempty"`
+					OriginalDestination                      `json:"original-destination,omitempty"`
+					OriginalService                          `json:"original-service,omitempty"`
+					OriginalSource                           `json:"original-source,omitempty"`
+					TranslatedDestination                    `json:"translated-destination,omitempty"`
+					TranslatedService                        `json:"translated-service,omitempty"`
+					TranslatedSource                         `json:"translated-source,omitempty"`
+					Enabled	    		     bool		    	       `json:"enabled"`
+        	Comments				     string			 	       `json:"comments,omitempty"`
+					Installon			       []string		 	       `json:"install-on,omitempty"`
+				}
+
 type AccessSectionResult struct {
 					Uid                  string              `json:"uid,omitempty"`
 					Name                 string              `json:"name,omitempty"`
@@ -250,12 +340,47 @@ type Position    struct				 	{
 					Top             string         `json:"top,omitempty"`
 					Bottom          string         `json:"bottom,omitempty"`																														}
 
-
 type Service  []struct				 	{
 					Name						string				 `json:"name,omitempty"`
 				  Uid						  string				 `json:"uid,omitempty"`
 				  Type            string         `json:"type,omitempty"`
 																		}
+type OriginalDestination struct				 	{
+					Name						string				 `json:"name,omitempty"`
+				  Uid						  string				 `json:"uid,omitempty"`
+				  Type            string         `json:"type,omitempty"`
+																		}
+type TranslatedDestination struct				 	{
+					Name						string				 `json:"name,omitempty"`
+				  Uid						  string				 `json:"uid,omitempty"`
+				  Type            string         `json:"type,omitempty"`
+																		}
+type OriginalSource struct				 	{
+				Name						string				 `json:"name,omitempty"`
+				Uid						  string				 `json:"uid,omitempty"`
+				Type            string         `json:"type,omitempty"`
+																	}
+type TranslatedSource struct				 	{
+				Name						string				 `json:"name,omitempty"`
+				Uid						  string				 `json:"uid,omitempty"`
+				Type            string         `json:"type,omitempty"`
+																	}
+type OriginalService struct				 	{
+				Name						string				 `json:"name,omitempty"`
+				Uid						  string				 `json:"uid,omitempty"`
+				Type            string         `json:"type,omitempty"`
+																	}
+type TranslatedService struct				 	{
+				Name						string				 `json:"name,omitempty"`
+				Uid						  string				 `json:"uid,omitempty"`
+				Type            string         `json:"type,omitempty"`
+																	}
+type Installon  []struct				 	{
+					Name						string				 `json:"name,omitempty"`
+					Uid						  string				 `json:"uid,omitempty"`
+					Type            string         `json:"type,omitempty"`
+									}
+
 type Taskid struct {
     Taskid               string              `json:"task-id"`
 }
