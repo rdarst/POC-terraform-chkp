@@ -16,9 +16,6 @@ resource "chkp_network" "vnet_remote" {
       masklength4 = "16"
       name = "Azure-Remote-vNet"
       color = "blue"
-      natsettings {
-        autorule = false
-        }
       }
 
 resource "chkp_network" "aws_VPC_1" {
@@ -26,7 +23,4 @@ resource "chkp_network" "aws_VPC_1" {
       masklength4 = "16"
       name = "aws_VPC_1"
       color = "orange"
-      natsettings {
-        autorule = false
-        }
       }

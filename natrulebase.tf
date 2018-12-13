@@ -37,6 +37,7 @@ resource "chkp_accessnatlist" "InitialNATRules" {
                   comments = "nat rule 3"
                   enabled = true
                   method = "static"
+                  
                                   }
 
             natlist {
@@ -51,5 +52,7 @@ resource "chkp_accessnatlist" "InitialNATRules" {
                   enabled = true
                   method = "static"
                                   }
+
+
 
                               }
