@@ -106,6 +106,17 @@ type GroupMembers struct {
         }
 }
 
+type ServiceGroupMembers struct {
+        Uid            string							`json:"uid,omitempty"`
+        Name           string             `json:"name,omitempty"`
+        Color            string             `json:"color,omitempty"`
+        Members        []struct {
+                Uid          string       `json:"uid,omitempty"`
+                Name         string       `json:"name,omitempty"`
+                Type         string       `json:"type,omitempty"`
+        }
+}
+
 type Group struct {
 	Uid                  string              `json:"uid,omitempty"`
 	Name                 string              `json:"name,omitempty"`
@@ -114,7 +125,30 @@ type Group struct {
 	Newname				       string			 	       `json:"new-name,omitempty"`
 }
 
+type ServiceGroup struct {
+	Uid                  string              `json:"uid,omitempty"`
+	Name                 string              `json:"name,omitempty"`
+	Color                string              `json:"color,omitempty"`
+	Members			       []string			 	       `json:"members,omitempty"`
+	Newname				       string			 	       `json:"new-name,omitempty"`
+}
+
 type DynamicObject struct {
+	Uid                  string              `json:"uid,omitempty"`
+	Name                 string              `json:"name,omitempty"`
+	Color                string              `json:"color,omitempty"`
+	Newname				       string			 	       `json:"new-name,omitempty"`
+}
+
+type DNSDomain struct {
+	Uid                  string              `json:"uid,omitempty"`
+	Name                 string              `json:"name",omitempty`
+	Color                string              `json:"color,omitempty"`
+	Newname              string			 	       `json:"new-name,omitempty"`
+	Issubdomain			     bool			 	         `json:"is-sub-domain"`
+}
+
+type SecurityZone struct {
 	Uid                  string              `json:"uid,omitempty"`
 	Name                 string              `json:"name,omitempty"`
 	Color                string              `json:"color,omitempty"`

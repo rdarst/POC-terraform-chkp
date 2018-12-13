@@ -391,6 +391,108 @@ func(c *Client) DeleteGroup(uid string) (string, error) {
 	return "", err
 }
 
+func(c *Client) CreateServiceGroup(servicegroup ServiceGroup) ([]byte, error) {
+
+	spotBytes, _ := json.Marshal(servicegroup)
+	spotReader := bytes.NewReader(spotBytes)
+
+	req, err := http.NewRequest("POST", c.base+"/add-service-group", spotReader)
+
+	if err != nil {
+		return nil, errors.New("Sorry something went wrong.  API busy??")
+	}
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("X-chkp-sid", c.sid)
+	req.Header.Set("Accept", "application/json")
+	resp, err := c.client.Do(req)
+	if resp.StatusCode >= 400 {
+		var errorreturn APIError
+		body, _ := ioutil.ReadAll(resp.Body)
+		json.Unmarshal([]byte(body), &errorreturn)
+		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
+	}
+
+	defer resp.Body.Close()
+	body, _ := ioutil.ReadAll(resp.Body)
+	return body, err
+}
+
+func(c *Client) SetServiceGroup(servicegroup ServiceGroup) ([]byte, error) {
+
+	spotBytes, _ := json.Marshal(servicegroup)
+	spotReader := bytes.NewReader(spotBytes)
+
+	req, err := http.NewRequest("POST", c.base+"/set-service-group", spotReader)
+
+	if err != nil {
+		return nil, errors.New("Sorry something went wrong.  API busy??")
+	}
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("X-chkp-sid", c.sid)
+	req.Header.Set("Accept", "application/json")
+	resp, err := c.client.Do(req)
+	if resp.StatusCode >= 400 {
+		var errorreturn APIError
+		body, _ := ioutil.ReadAll(resp.Body)
+		json.Unmarshal([]byte(body), &errorreturn)
+		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
+	}
+
+	defer resp.Body.Close()
+	body, _ := ioutil.ReadAll(resp.Body)
+	return body, err
+}
+
+func(c *Client) ShowServiceGroup(servicegroupuid string) ([]byte, error) {
+
+  var jsonStr = []byte(fmt.Sprintf(`{"uid": "%v"}`, servicegroupuid))
+	req, err := http.NewRequest("POST", c.base+"/show-service-group", bytes.NewBuffer(jsonStr))
+
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("X-chkp-sid", c.sid)
+	req.Header.Set("Accept", "application/json")
+	resp, err := c.client.Do(req)
+	if resp.StatusCode >= 400 {
+		var errorreturn APIError
+		body, _ := ioutil.ReadAll(resp.Body)
+		json.Unmarshal([]byte(body), &errorreturn)
+		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
+	}
+
+	defer resp.Body.Close()
+	type Uid struct {
+	                  Uid string
+					  			}
+	var uid Uid
+	body, _ := ioutil.ReadAll(resp.Body)
+	json.Unmarshal([]byte(body), &uid)
+
+	return body, err
+}
+
+func(c *Client) DeleteServiceGroup(uid string) (string, error) {
+
+  var jsonStr = []byte(fmt.Sprintf(`{"uid": "%v"}`, uid))
+	req, err := http.NewRequest("POST", c.base+"/delete-service-group", bytes.NewBuffer(jsonStr))
+
+	if err != nil {
+		return "", err
+	}
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("X-chkp-sid", c.sid)
+	req.Header.Set("Accept", "application/json")
+	resp, err := c.client.Do(req)
+	if resp.StatusCode >= 400 {
+		var errorreturn APIError
+		body, _ := ioutil.ReadAll(resp.Body)
+		json.Unmarshal([]byte(body), &errorreturn)
+		return "", fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
+	}
+
+	defer resp.Body.Close()
+	return "", err
+}
+
 //////////////////////////////////////////
 func(c *Client) CreateDynamicObject(dynamicobject DynamicObject) ([]byte, error) {
 
@@ -492,8 +594,212 @@ func(c *Client) DeleteDynamicObject(uid string) (string, error) {
 	defer resp.Body.Close()
 	return "", err
 }
-
 /////////////////////////////////////////
+func(c *Client) CreateSecurityZone(securityzone SecurityZone) ([]byte, error) {
+
+	spotBytes, _ := json.Marshal(securityzone)
+	spotReader := bytes.NewReader(spotBytes)
+	req, err := http.NewRequest("POST", c.base+"/add-security-zone", spotReader)
+
+	if err != nil {
+		return nil, errors.New("Sorry something went wrong.  API busy??")
+	}
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("X-chkp-sid", c.sid)
+	req.Header.Set("Accept", "application/json")
+	resp, err := c.client.Do(req)
+	if resp.StatusCode >= 400 {
+		var errorreturn APIError
+		body, _ := ioutil.ReadAll(resp.Body)
+		json.Unmarshal([]byte(body), &errorreturn)
+		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
+	}
+
+	defer resp.Body.Close()
+	body, _ := ioutil.ReadAll(resp.Body)
+	return body, err
+}
+
+func(c *Client) SetSecurityZone(securityzone SecurityZone) ([]byte, error) {
+
+	spotBytes, _ := json.Marshal(securityzone)
+	spotReader := bytes.NewReader(spotBytes)
+
+	req, err := http.NewRequest("POST", c.base+"/set-security-zone", spotReader)
+
+	if err != nil {
+		return nil, errors.New("Sorry something went wrong.  API busy??")
+	}
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("X-chkp-sid", c.sid)
+	req.Header.Set("Accept", "application/json")
+	resp, err := c.client.Do(req)
+	if resp.StatusCode >= 400 {
+		var errorreturn APIError
+		body, _ := ioutil.ReadAll(resp.Body)
+		json.Unmarshal([]byte(body), &errorreturn)
+		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
+	}
+
+	defer resp.Body.Close()
+	body, _ := ioutil.ReadAll(resp.Body)
+	return body, err
+}
+
+func(c *Client) ShowSecurityZone(securityzoneuid string) ([]byte, error) {
+
+  var jsonStr = []byte(fmt.Sprintf(`{"uid": "%v"}`, securityzoneuid))
+	req, err := http.NewRequest("POST", c.base+"/show-security-zone", bytes.NewBuffer(jsonStr))
+
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("X-chkp-sid", c.sid)
+	req.Header.Set("Accept", "application/json")
+	resp, err := c.client.Do(req)
+	if resp.StatusCode >= 400 {
+		var errorreturn APIError
+		body, _ := ioutil.ReadAll(resp.Body)
+		json.Unmarshal([]byte(body), &errorreturn)
+		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
+	}
+
+	defer resp.Body.Close()
+	type Uid struct {
+	                  Uid string
+					  			}
+	var uid Uid
+	body, _ := ioutil.ReadAll(resp.Body)
+	json.Unmarshal([]byte(body), &uid)
+
+	return body, err
+}
+
+func(c *Client) DeleteSecurityZone(uid string) (string, error) {
+
+  var jsonStr = []byte(fmt.Sprintf(`{"uid": "%v"}`, uid))
+	req, err := http.NewRequest("POST", c.base+"/delete-security-zone", bytes.NewBuffer(jsonStr))
+
+	if err != nil {
+		return "", err
+	}
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("X-chkp-sid", c.sid)
+	req.Header.Set("Accept", "application/json")
+	resp, err := c.client.Do(req)
+	if resp.StatusCode >= 400 {
+		var errorreturn APIError
+		body, _ := ioutil.ReadAll(resp.Body)
+		json.Unmarshal([]byte(body), &errorreturn)
+		return "", fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
+	}
+
+	defer resp.Body.Close()
+	return "", err
+}
+/////////////////////////////////////////
+////////////////////////////////////////
+func(c *Client) CreateDNSDomain(dnsdomain DNSDomain) ([]byte, error) {
+
+	spotBytes, _ := json.Marshal(dnsdomain)
+	spotReader := bytes.NewReader(spotBytes)
+	req, err := http.NewRequest("POST", c.base+"/add-dns-domain", spotReader)
+
+	if err != nil {
+		return nil, errors.New("Sorry something went wrong.  API busy??")
+	}
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("X-chkp-sid", c.sid)
+	req.Header.Set("Accept", "application/json")
+	resp, err := c.client.Do(req)
+	if resp.StatusCode >= 400 {
+		var errorreturn APIError
+		body, _ := ioutil.ReadAll(resp.Body)
+		json.Unmarshal([]byte(body), &errorreturn)
+		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
+	}
+
+	defer resp.Body.Close()
+	body, _ := ioutil.ReadAll(resp.Body)
+	return body, err
+}
+
+func(c *Client) SetDNSDomain(dnsdomain DNSDomain) ([]byte, error) {
+
+	spotBytes, _ := json.Marshal(dnsdomain)
+	spotReader := bytes.NewReader(spotBytes)
+
+	req, err := http.NewRequest("POST", c.base+"/set-dns-domain", spotReader)
+
+	if err != nil {
+		return nil, errors.New("Sorry something went wrong.  API busy??")
+	}
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("X-chkp-sid", c.sid)
+	req.Header.Set("Accept", "application/json")
+	resp, err := c.client.Do(req)
+	if resp.StatusCode >= 400 {
+		var errorreturn APIError
+		body, _ := ioutil.ReadAll(resp.Body)
+		json.Unmarshal([]byte(body), &errorreturn)
+		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
+	}
+
+	defer resp.Body.Close()
+	body, _ := ioutil.ReadAll(resp.Body)
+	return body, err
+}
+
+func(c *Client) ShowDNSDomain(dnsdomainuid string) ([]byte, error) {
+
+  var jsonStr = []byte(fmt.Sprintf(`{"uid": "%v"}`, dnsdomainuid))
+	req, err := http.NewRequest("POST", c.base+"/show-dns-domain", bytes.NewBuffer(jsonStr))
+
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("X-chkp-sid", c.sid)
+	req.Header.Set("Accept", "application/json")
+	resp, err := c.client.Do(req)
+	if resp.StatusCode >= 400 {
+		var errorreturn APIError
+		body, _ := ioutil.ReadAll(resp.Body)
+		json.Unmarshal([]byte(body), &errorreturn)
+		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
+	}
+
+	defer resp.Body.Close()
+	type Uid struct {
+	                  Uid string
+					  			}
+	var uid Uid
+	body, _ := ioutil.ReadAll(resp.Body)
+	json.Unmarshal([]byte(body), &uid)
+
+	return body, err
+}
+
+func(c *Client) DeleteDNSDomain(uid string) (string, error) {
+
+  var jsonStr = []byte(fmt.Sprintf(`{"uid": "%v"}`, uid))
+	req, err := http.NewRequest("POST", c.base+"/delete-dns-domain", bytes.NewBuffer(jsonStr))
+
+	if err != nil {
+		return "", err
+	}
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("X-chkp-sid", c.sid)
+	req.Header.Set("Accept", "application/json")
+	resp, err := c.client.Do(req)
+	if resp.StatusCode >= 400 {
+		var errorreturn APIError
+		body, _ := ioutil.ReadAll(resp.Body)
+		json.Unmarshal([]byte(body), &errorreturn)
+		return "", fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
+	}
+
+	defer resp.Body.Close()
+	return "", err
+}
+/////////////////////////////////////////
+
+////////////////////////////////////////
 
 func(c *Client) CreateNetwork(network Network) ([]byte, error) {
 
@@ -1426,6 +1732,27 @@ func(c *Client) ReadServiceTcpData(servicetcpname string) ([]byte, error) {
 
   var jsonStr = []byte(fmt.Sprintf(`{"name": "%v"}`, servicetcpname))
 	req, err := http.NewRequest("POST", c.base+"/show-service-tcp", bytes.NewBuffer(jsonStr))
+
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("X-chkp-sid", c.sid)
+	req.Header.Set("Accept", "application/json")
+	resp, err := c.client.Do(req)
+	if resp.StatusCode >= 400 {
+		var errorreturn APIError
+		body, _ := ioutil.ReadAll(resp.Body)
+		json.Unmarshal([]byte(body), &errorreturn)
+		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
+	}
+
+	defer resp.Body.Close()
+	body, _ := ioutil.ReadAll(resp.Body)
+	return body, err
+}
+
+func(c *Client) ReadServiceUdpData(serviceudpname string) ([]byte, error) {
+
+  var jsonStr = []byte(fmt.Sprintf(`{"name": "%v"}`, serviceudpname))
+	req, err := http.NewRequest("POST", c.base+"/show-service-udp", bytes.NewBuffer(jsonStr))
 
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("X-chkp-sid", c.sid)
