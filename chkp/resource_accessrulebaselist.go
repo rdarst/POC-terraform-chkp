@@ -185,6 +185,16 @@ func resourceAccessRulebaseListCreate(d *schema.ResourceData, meta interface{}) 
   if err != nil {
 		return err
 	}
+  //Create NAT sections for NAT anchors with Section Titles
+  natsectionuid, err := client.CreateNATSection(readPolicyPackage.Uid,"bottom","Terraform NAT Rules Below This Position")
+  if err != nil {
+		return err
+	}
+  natsectionuid, err = client.CreateNATSection(readPolicyPackage.Uid,"bottom","Terraform NAT Rules Above This Position")
+  if err != nil {
+		return err
+	}
+  _ = natsectionuid
 
   // Pull in Rulebase rules
   layerlist :=d.Get("rulebase").([]interface{})

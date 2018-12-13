@@ -54,7 +54,7 @@ func resourceHost() *schema.Resource {
                                       "installon": {
                                             Type:     schema.TypeString,
                                             Optional: true,
-                                            
+
                                       },
                                       "method": {
                                             Type:     schema.TypeString,
@@ -191,11 +191,13 @@ func resourceHostDelete(d *schema.ResourceData, meta interface{}) error {
 func flattenHostSettings(host chkp.NatSettings) []interface{} {
 	result := make(map[string]interface{})
 
+
 		result["installon"] = host.Installon
     result["autorule"] = host.Autorule
     result["hidebehind"] = host.Hidebehind
     result["ipaddress"] = host.Ipaddress
     result["method"] = host.Method
+    if result["autorule"] == false { return nil }
 	return []interface{}{result}
 
 }

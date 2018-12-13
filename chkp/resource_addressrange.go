@@ -203,6 +203,7 @@ func flattenAddressRangeSettings(addressrange chkp.NatSettings) []interface{} {
     result["hidebehind"] = addressrange.Hidebehind
     result["ipaddress"] = addressrange.Ipaddress
     result["method"] = addressrange.Method
+    if result["autorule"] == false { return nil }
 	return []interface{}{result}
 
 }

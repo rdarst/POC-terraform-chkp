@@ -198,6 +198,7 @@ func flattenNatSettings(nat chkp.NatSettings) []interface{} {
     result["hidebehind"] = nat.Hidebehind
     result["ipaddress"] = nat.Ipaddress
     result["method"] = nat.Method
+    if result["autorule"] == false { return nil }
 	return []interface{}{result}
 
 }
