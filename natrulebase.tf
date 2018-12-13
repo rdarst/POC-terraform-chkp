@@ -47,7 +47,7 @@ resource "chkp_accessnatlist" "InitialNATRules" {
                   translatedservice = "${data.chkp_servicetcp.ssh.name}"
                   translatedsource = "${chkp_host.jumphost.name}"
                   translateddestination = "${chkp_host.ubuntu1.name}"
-                  comments = "nat rule 3"
+                  comments = "nat rule 4"
                   enabled = true
                   method = "static"
                                   }
