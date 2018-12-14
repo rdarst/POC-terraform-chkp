@@ -1,8 +1,11 @@
-resource "chkp_accessrulebaselist" "InitialRules" {
-      name = "AzureScaleSetPackage"
-      access = true
-      threatprevention = false
+resource "chkp_accesslayerlist" "LayerRules" {
+      name = "TerraformLayer"
+      appandurl = true
+      firewall = true
+      shared = true
+      adddefaultrule = false
       color = "pink"
+
 
           rulebase {
                 enabled = true
@@ -41,7 +44,7 @@ resource "chkp_accessrulebaselist" "InitialRules" {
                 source = ["${chkp_network.vnet_local.name}","${chkp_securityzone.mysecurityzone.name}"]
                 enabled = true
                 action = "Apply Layer"
-                inlinelayer = "${chkp_accesslayerlist.LayerRules.name}"
+                inlinelayer = "MyTestLayer"
                 track {
                       type = "None"
                       perconnection = "false"
