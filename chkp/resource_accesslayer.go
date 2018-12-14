@@ -114,7 +114,7 @@ func resourceAccessLayerRead(d *schema.ResourceData, meta interface{}) error {
 
 func resourceAccessLayerUpdate(d *schema.ResourceData, meta interface{}) error {
   client := meta.(*chkp.Client)
-	var accesslayer = chkp.AccessLayer{}
+	var accesslayer = chkp.AccessLayerUpdate{}
   accesslayer.Name = d.Get("name").(string)
 	accesslayer.AppAndUrl = d.Get("appandurl").(bool)
   accesslayer.ContentAwareness = d.Get("contentawareness").(bool)

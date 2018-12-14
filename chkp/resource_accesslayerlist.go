@@ -6,42 +6,40 @@ import (
     		"encoding/json"
       //  "strings"
         "reflect"
-        "fmt"
 )
 
-func resourceAccessRulebaseList() *schema.Resource {
+func resourceAccessLayerList() *schema.Resource {
         return &schema.Resource{
-                Create: resourceAccessRulebaseListCreate,
-                Read:   resourceAccessRulebaseListRead,
-                Update: resourceAccessRulebaseListUpdate,
-                Delete: resourceAccessRulebaseListDelete,
+                Create: resourceAccessLayerListCreate,
+                Read:   resourceAccessLayerListRead,
+                Update: resourceAccessLayerListUpdate,
+                Delete: resourceAccessLayerListDelete,
 
                 Schema: map[string]*schema.Schema{
 
-                  "access": {
+                  "appandurl": {
+                          Type:     schema.TypeBool,
+                          Optional: true,
+                            },
+                  "contentawareness": {
+                          Type:     schema.TypeBool,
+                          Optional: true,
+                          Default: false,
+                  },
+                  "adddefaultrule": {
+                          Type:     schema.TypeBool,
+                          Required: true,
+
+                  },
+                  "firewall": {
                           Type:     schema.TypeBool,
                           Optional: true,
                           Default: true,
-                            },
-                  "desktopsecurity": {
+                  },
+                  "mobileaccess": {
                           Type:     schema.TypeBool,
                           Optional: true,
                           Default: false,
-                  },
-                  "qos": {
-                          Type:     schema.TypeBool,
-                          Optional: true,
-                          Default: false,
-                  },
-                  "threatprevention": {
-                          Type:     schema.TypeBool,
-                          Optional: true,
-                          Default: false,
-                  },
-                  "qospolicytype": {
-                          Type:     schema.TypeString,
-                          Optional: true,
-                          Default: "recommended",
                   },
                   "name": {
                           Type:     schema.TypeString,
@@ -52,12 +50,16 @@ func resourceAccessRulebaseList() *schema.Resource {
                           Optional: true,
                           Default: "black",
                   },
-                  "uid": {
+                  "comments": {
                           Type:     schema.TypeString,
                           Optional: true,
-                          Computed: true,
                   },
-                  "layeruid": {
+                  "shared": {
+                          Type:     schema.TypeBool,
+                          Optional: true,
+                          Default: false,
+                  },
+                  "uid": {
                           Type:     schema.TypeString,
                           Optional: true,
                           Computed: true,
@@ -75,16 +77,13 @@ func resourceAccessRulebaseList() *schema.Resource {
                              "action": {
                                      Type:     schema.TypeString,
                                      Optional: true,
-                                     ValidateFunc: func(v interface{}, k string) (ws []string, es []error) {
-								                        value := v.(string)
-								                        if value != "Accept" && value != "Drop" && value != "Ask" && value != "Inform" && value != "Reject" && value != "User Auth" && value != "Client Auth" && value != "Apply Layer"  {
-									                         es = append(es, fmt.Errorf("Action must be either Accept, Drop, Ask, Inform, Reject, User Auth, Client Auth, or Apply Layer"))
-								                          }
-                                          return
                                        },
-                                     },
                              "inlinelayer": {
                                      Type:     schema.TypeString,
+                                     Optional: true,
+                                       },
+                             "adddefaultrule": {
+                                     Type:     schema.TypeBool,
                                      Optional: true,
                                        },
                              "source": {
@@ -162,47 +161,31 @@ func resourceAccessRulebaseList() *schema.Resource {
        }
 }
 
-func resourceAccessRulebaseListCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceAccessLayerListCreate(d *schema.ResourceData, meta interface{}) error {
   client := meta.(*chkp.Client)
 
-  var policypackage = chkp.PolicyPackage{}
-  policypackage.Name = d.Get("name").(string)
-  policypackage.Access = d.Get("access").(bool)
-  policypackage.DesktopSecurity = d.Get("desktopsecurity").(bool)
-  policypackage.Qos = d.Get("qos").(bool)
-  policypackage.ThreatPrevention = d.Get("threatprevention").(bool)
-  policypackage.QosPolicyType = d.Get("qospolicytype").(string)
-  policypackage.Color = d.Get("color").(string)
-  id, err := client.CreatePolicyPackage(policypackage)
+  var accesslayer = chkp.AccessLayer{}
+	accesslayer.Name = d.Get("name").(string)
+	accesslayer.AppAndUrl = d.Get("appandurl").(bool)
+  accesslayer.ContentAwareness = d.Get("contentawareness").(bool)
+  accesslayer.Firewall = d.Get("firewall").(bool)
+  accesslayer.MobileAccess = d.Get("mobileaccess").(bool)
+  accesslayer.Shared = d.Get("shared").(bool)
+  accesslayer.AddDefaultRule = d.Get("adddefaultrule").(bool)
+  accesslayer.Color = d.Get("color").(string)
+  accesslayer.Comments = d.Get("comments").(string)
+
+	id, err := client.CreateAccessLayer(accesslayer)
   //Read in from the API Output
-  readPolicyPackage := chkp.PolicyPackage{}
-  json.Unmarshal(id, &readPolicyPackage)
-  d.SetId(readPolicyPackage.Uid)
-  d.Set("uid", readPolicyPackage.Uid)
-  if err != nil {
+  readAccessLayer := chkp.AccessLayer{}
+  json.Unmarshal(id, &readAccessLayer)
+	d.SetId(readAccessLayer.Uid)
+  d.Set("uid", readAccessLayer.Uid)
+  d.Set("name", readAccessLayer.Name)
+	if err != nil {
 		return err
 	}
-  layer := d.Get("name").(string)+" Network"
-  layeruid, err := client.ReadLayerNametoUID(layer)
-  d.Set("layeruid", layeruid)
-  //Get Default Cleanup rule UID that was just created
-  getcleanupid, err := client.ShowAccessRulebaseByName("Cleanup rule", layer)
-  readLayer := chkp.AccessLayer{}
-  json.Unmarshal(getcleanupid, &readLayer)
-  cleanupuid := readLayer.Uid
-  if err != nil {
-		return err
-	}
-  //Create NAT sections for NAT anchors with Section Titles
-  natsectionuid, err := client.CreateNATSection(readPolicyPackage.Uid,"bottom","Terraform NAT Rules Below This Position")
-  if err != nil {
-		return err
-	}
-  natsectionuid, err = client.CreateNATSection(readPolicyPackage.Uid,"bottom","Terraform NAT Rules Above This Position")
-  if err != nil {
-		return err
-	}
-  _ = natsectionuid
+
 
   // Pull in Rulebase rules
   layerlist :=d.Get("rulebase").([]interface{})
@@ -214,7 +197,7 @@ func resourceAccessRulebaseListCreate(d *schema.ResourceData, meta interface{}) 
     layerelement := layerlist[q].(map[string]interface{})
           var accessrulebase = chkp.AccessRulebaseList{}
           accessrulebase.Name = layerelement["name"].(string)
-          accessrulebase.Layer = layer
+          accessrulebase.Layer = readAccessLayer.Name
           accessrulebase.Action = layerelement["action"].(string)
           accessrulebase.Enabled = layerelement["enabled"].(bool)
           accessrulebase.InlineLayer = layerelement["inlinelayer"].(string)
@@ -287,38 +270,32 @@ func resourceAccessRulebaseListCreate(d *schema.ResourceData, meta interface{}) 
         		return err
         	}
 }
-// Delete the Default-Cleanup Rule that is created by the policypackage creation
-layerdelete, err :=client.DeleteAccessRulebase(cleanupuid, layer)
-if err != nil {
-  return err
-}
-_ = layerdelete
 
 d.Set("rulebase", uidlist)
 return nil
 }
 
-func resourceAccessRulebaseListRead(d *schema.ResourceData, meta interface{}) error {
+func resourceAccessLayerListRead(d *schema.ResourceData, meta interface{}) error {
   client := meta.(*chkp.Client)
-  id, err := client.ShowPolicyPackage(d.Id())
-
-	readPolicyPackage := chkp.PolicyPackage{}
-  json.Unmarshal(id, &readPolicyPackage)
-	d.SetId(readPolicyPackage.Uid)
-	d.Set("color", readPolicyPackage.Color)
-	d.Set("name", readPolicyPackage.Name)
-	d.Set("access", readPolicyPackage.Access)
-  d.Set("desktopsecurity", readPolicyPackage.DesktopSecurity)
-  d.Set("qos", readPolicyPackage.Qos)
-  d.Set("threatprevention", readPolicyPackage.ThreatPrevention)
-  d.Set("qospolicytype", readPolicyPackage.QosPolicyType)
-
-	if err != nil {
+  id, err := client.ShowAccessLayer(d.Id())
+  readAccessLayer := chkp.AccessLayer{}
+  json.Unmarshal(id, &readAccessLayer)
+	d.SetId(readAccessLayer.Uid)
+	d.Set("color", readAccessLayer.Color)
+	d.Set("name", readAccessLayer.Name)
+	d.Set("appandurl", readAccessLayer.AppAndUrl)
+  d.Set("contentawareness", readAccessLayer.ContentAwareness)
+  d.Set("firewall", readAccessLayer.Firewall)
+  d.Set("mobileaccess", readAccessLayer.MobileAccess)
+  d.Set("shared", readAccessLayer.Shared)
+  d.Set("comments", readAccessLayer.Comments)
+  if err != nil {
 		return err
 	}
+
   // Set API limit on the number of records returned default is 50 max is 500
   limit := 100
-  layer := d.Get("name").(string)+" Network"
+  layer := readAccessLayer.Name
   id2, err := client.ShowAccessRulebaseList(layer, limit, 0)
 
   readAccessRulebase := chkp.AccessRulebaseResultRead{}
@@ -448,61 +425,63 @@ func resourceAccessRulebaseListRead(d *schema.ResourceData, meta interface{}) er
 
 }
 
-func flattenTrackSettings(track *chkp.Track) []interface{} {
-	result := make(map[string]interface{})
-		result["alert"] = track.Alert
-    result["type"] = track.Type
-    result["persession"] = track.PerSession
-    result["perconnection"] = track.PerConnection
-    result["accounting"] = track.Accounting
-	return []interface{}{result}
-}
 
-func resourceAccessRulebaseListUpdate(d *schema.ResourceData, meta interface{}) error {
+
+func resourceAccessLayerListUpdate(d *schema.ResourceData, meta interface{}) error {
   client := meta.(*chkp.Client)
   updatepolicy := false
-  var policypackage = chkp.PolicyPackage{}
-  if d.HasChange("access") {policypackage.Access = d.Get("access").(bool)
-  updatepolicy = true}
-  if d.HasChange("desktopsecurity") {policypackage.DesktopSecurity = d.Get("desktopsecurity").(bool)
-  updatepolicy = true}
-  if d.HasChange("qos") {policypackage.Qos = d.Get("qos").(bool)
-  updatepolicy = true}
-  if d.HasChange("threatprevention") {policypackage.ThreatPrevention = d.Get("threatprevention").(bool)
-  updatepolicy = true}
-  if d.HasChange("qospolicytype") {policypackage.QosPolicyType = d.Get("qospolicytype").(string)
-  updatepolicy = true}
-  if d.HasChange("color") {policypackage.Color = d.Get("color").(string)
-  updatepolicy = true}
-	if d.HasChange("uid") {policypackage.Uid = d.Get("uid").(string)
-  updatepolicy = true}
-  // If the Policy Name changes update the Layer name to match
-  if d.HasChange("name") {policypackage.Newname = d.Get("name").(string)
-  updatepolicy = true
   var accesslayer = chkp.AccessLayerUpdate{}
-  accesslayer.Newname = d.Get("name").(string)+" Network"
-  accesslayer.Uid = d.Get("layeruid").(string)
-	id, err := client.SetAccessLayer(accesslayer)
-  _ = id
-  if err != nil {
-    return err
+  oldname, newname := d.GetChange("name")
+  if oldname.(string) != newname.(string) {
+    accesslayer.Newname = newname.(string)
+    accesslayer.Name = oldname.(string)
+    updatepolicy = true
+   } else {
+     accesslayer.Name = d.Get("name").(string)
    }
+  if d.HasChange("appandurl") {
+   accesslayer.AppAndUrl = d.Get("appandurl").(bool)
+   updatepolicy = true
   }
+  if d.HasChange("contentawareness") {
+    accesslayer.ContentAwareness = d.Get("contentawareness").(bool)
+    updatepolicy = true
+   }
+   if d.HasChange("firewall") {
+     accesslayer.Firewall = d.Get("firewall").(bool)
+     updatepolicy = true
+    }
+    if d.HasChange("mobileaccess") {
+      accesslayer.MobileAccess = d.Get("mobileaccess").(bool)
+      updatepolicy = true
+     }
+   if d.HasChange("shared") {
+     accesslayer.Shared = d.Get("shared").(bool)
+     updatepolicy = true
+    }
+    if d.HasChange("color") {
+      accesslayer.Color = d.Get("color").(string)
+      updatepolicy = true
+     }
+   if d.HasChange("comments") {
+    accesslayer.Comments = d.Get("comments").(string)
+     updatepolicy = true
+    }
 
-  if updatepolicy  {
-  policypackage.Uid = d.Get("uid").(string)
-  id, err := client.SetPolicyPackage(policypackage)
-  if err != nil {return err}
-  //Read in from the API Output
-  readPolicyPackage := chkp.PolicyPackage{}
-  if err := json.Unmarshal(id, &readPolicyPackage); err != nil {return err}
-  d.SetId(readPolicyPackage.Uid)
-  d.Set("uid", readPolicyPackage.Uid)
-  if err != nil {
-		return err
+	if updatepolicy  {
+    id, err := client.SetAccessLayer(accesslayer)
+    if err != nil {return err}
+    //Read in from the API Output
+    readAccessLayer := chkp.AccessLayer{}
+    if err := json.Unmarshal(id, &readAccessLayer); err != nil {return err}
+    d.SetId(readAccessLayer.Uid)
+    d.Set("uid", readAccessLayer.Uid)
+    d.Set("name", readAccessLayer.Name)
+  	if err != nil {
+  		return err
+  	}
   }
-  }
-  layer := d.Get("name").(string)+" Network"
+  layer := d.Get("name").(string)
 
 //Get changes old and new and place them into a new interface
 o, n := d.GetChange("rulebase")
@@ -755,10 +734,9 @@ d.Set("rulebase", uidlist)
 
 }
 
-func resourceAccessRulebaseListDelete(d *schema.ResourceData, meta interface{}) error {
-     client := meta.(*chkp.Client)
-     client.DeletePolicyPackage(d.Id())
+  func resourceAccessLayerListDelete(d *schema.ResourceData, meta interface{}) error {
+    client := meta.(*chkp.Client)
+    client.DeleteAccessLayer(d.Id())
+    return nil
 
-	return nil
-
-}
+  }
