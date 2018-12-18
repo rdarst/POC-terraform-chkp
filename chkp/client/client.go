@@ -390,7 +390,238 @@ func(c *Client) DeleteGroup(uid string) (string, error) {
 	defer resp.Body.Close()
 	return "", err
 }
+////////////////////
+func(c *Client) CreateApplicationGroup(applicationgroup ApplicationGroup) ([]byte, error) {
 
+	spotBytes, _ := json.Marshal(applicationgroup)
+	spotReader := bytes.NewReader(spotBytes)
+
+	req, err := http.NewRequest("POST", c.base+"/add-application-site-group", spotReader)
+
+	if err != nil {
+		return nil, errors.New("Sorry something went wrong.  API busy??")
+	}
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("X-chkp-sid", c.sid)
+	req.Header.Set("Accept", "application/json")
+	resp, err := c.client.Do(req)
+	if resp.StatusCode >= 400 {
+		var errorreturn APIError
+		body, _ := ioutil.ReadAll(resp.Body)
+		json.Unmarshal([]byte(body), &errorreturn)
+		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
+	}
+
+	defer resp.Body.Close()
+	body, _ := ioutil.ReadAll(resp.Body)
+	return body, err
+}
+
+func(c *Client) SetApplicationGroup(applicationgroup ApplicationGroup) ([]byte, error) {
+
+	spotBytes, _ := json.Marshal(applicationgroup)
+	spotReader := bytes.NewReader(spotBytes)
+
+	req, err := http.NewRequest("POST", c.base+"/set-application-site-group", spotReader)
+
+	if err != nil {
+		return nil, errors.New("Sorry something went wrong.  API busy??")
+	}
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("X-chkp-sid", c.sid)
+	req.Header.Set("Accept", "application/json")
+	resp, err := c.client.Do(req)
+	if resp.StatusCode >= 400 {
+		var errorreturn APIError
+		body, _ := ioutil.ReadAll(resp.Body)
+		json.Unmarshal([]byte(body), &errorreturn)
+		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
+	}
+
+	defer resp.Body.Close()
+	body, _ := ioutil.ReadAll(resp.Body)
+	return body, err
+}
+
+func(c *Client) ShowApplicationGroup(applicationgroupuid string) ([]byte, error) {
+
+  var jsonStr = []byte(fmt.Sprintf(`{"uid": "%v"}`, applicationgroupuid))
+	req, err := http.NewRequest("POST", c.base+"/show-application-site-group", bytes.NewBuffer(jsonStr))
+
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("X-chkp-sid", c.sid)
+	req.Header.Set("Accept", "application/json")
+	resp, err := c.client.Do(req)
+	if resp.StatusCode >= 400 {
+		var errorreturn APIError
+		body, _ := ioutil.ReadAll(resp.Body)
+		json.Unmarshal([]byte(body), &errorreturn)
+		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
+	}
+
+	defer resp.Body.Close()
+	type Uid struct {
+	                  Uid string
+					  			}
+	var uid Uid
+	body, _ := ioutil.ReadAll(resp.Body)
+	json.Unmarshal([]byte(body), &uid)
+
+	return body, err
+}
+
+func(c *Client) DeleteApplicationGroup(uid string) (string, error) {
+
+  var jsonStr = []byte(fmt.Sprintf(`{"uid": "%v"}`, uid))
+	req, err := http.NewRequest("POST", c.base+"/delete-application-site-group", bytes.NewBuffer(jsonStr))
+
+	if err != nil {
+		return "", err
+	}
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("X-chkp-sid", c.sid)
+	req.Header.Set("Accept", "application/json")
+	resp, err := c.client.Do(req)
+	if resp.StatusCode >= 400 {
+		var errorreturn APIError
+		body, _ := ioutil.ReadAll(resp.Body)
+		json.Unmarshal([]byte(body), &errorreturn)
+		return "", fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
+	}
+
+	defer resp.Body.Close()
+	return "", err
+}
+////////////////////
+func(c *Client) CreateApplicationSite(group ApplicationSite) ([]byte, error) {
+
+	spotBytes, _ := json.Marshal(group)
+	spotReader := bytes.NewReader(spotBytes)
+
+	req, err := http.NewRequest("POST", c.base+"/add-application-site", spotReader)
+
+	if err != nil {
+		return nil, errors.New("Sorry something went wrong.  API busy??")
+	}
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("X-chkp-sid", c.sid)
+	req.Header.Set("Accept", "application/json")
+	resp, err := c.client.Do(req)
+	if resp.StatusCode >= 400 {
+		var errorreturn APIError
+		body, _ := ioutil.ReadAll(resp.Body)
+		json.Unmarshal([]byte(body), &errorreturn)
+		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
+	}
+
+	defer resp.Body.Close()
+	body, _ := ioutil.ReadAll(resp.Body)
+	return body, err
+}
+
+func(c *Client) SetApplicationSite(group ApplicationSite) ([]byte, error) {
+
+	spotBytes, _ := json.Marshal(group)
+	spotReader := bytes.NewReader(spotBytes)
+
+	req, err := http.NewRequest("POST", c.base+"/set-application-site", spotReader)
+
+	if err != nil {
+		return nil, errors.New("Sorry something went wrong.  API busy??")
+	}
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("X-chkp-sid", c.sid)
+	req.Header.Set("Accept", "application/json")
+	resp, err := c.client.Do(req)
+	if resp.StatusCode >= 400 {
+		var errorreturn APIError
+		body, _ := ioutil.ReadAll(resp.Body)
+		json.Unmarshal([]byte(body), &errorreturn)
+		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
+	}
+
+	defer resp.Body.Close()
+	body, _ := ioutil.ReadAll(resp.Body)
+	return body, err
+}
+
+func(c *Client) SetApplicationSiteUpdateTag(group ApplicationSiteTagAddRemove) ([]byte, error) {
+
+	spotBytes, _ := json.Marshal(group)
+	spotReader := bytes.NewReader(spotBytes)
+
+	req, err := http.NewRequest("POST", c.base+"/set-application-site", spotReader)
+
+	if err != nil {
+		return nil, errors.New("Sorry something went wrong.  API busy??")
+	}
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("X-chkp-sid", c.sid)
+	req.Header.Set("Accept", "application/json")
+	resp, err := c.client.Do(req)
+	if resp.StatusCode >= 400 {
+		var errorreturn APIError
+		body, _ := ioutil.ReadAll(resp.Body)
+		json.Unmarshal([]byte(body), &errorreturn)
+		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
+	}
+
+	defer resp.Body.Close()
+	body, _ := ioutil.ReadAll(resp.Body)
+	return body, err
+}
+
+func(c *Client) ShowApplicationSite(groupuid string) ([]byte, error) {
+
+  var jsonStr = []byte(fmt.Sprintf(`{"uid": "%v"}`, groupuid))
+	req, err := http.NewRequest("POST", c.base+"/show-application-site", bytes.NewBuffer(jsonStr))
+
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("X-chkp-sid", c.sid)
+	req.Header.Set("Accept", "application/json")
+	resp, err := c.client.Do(req)
+	if resp.StatusCode >= 400 {
+		var errorreturn APIError
+		body, _ := ioutil.ReadAll(resp.Body)
+		json.Unmarshal([]byte(body), &errorreturn)
+		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
+	}
+
+	defer resp.Body.Close()
+	type Uid struct {
+	                  Uid string
+					  			}
+	var uid Uid
+	body, _ := ioutil.ReadAll(resp.Body)
+	json.Unmarshal([]byte(body), &uid)
+
+	return body, err
+}
+
+func(c *Client) DeleteApplicationSite(uid string) (string, error) {
+
+  var jsonStr = []byte(fmt.Sprintf(`{"uid": "%v"}`, uid))
+	req, err := http.NewRequest("POST", c.base+"/delete-application-site", bytes.NewBuffer(jsonStr))
+
+	if err != nil {
+		return "", err
+	}
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("X-chkp-sid", c.sid)
+	req.Header.Set("Accept", "application/json")
+	resp, err := c.client.Do(req)
+	if resp.StatusCode >= 400 {
+		var errorreturn APIError
+		body, _ := ioutil.ReadAll(resp.Body)
+		json.Unmarshal([]byte(body), &errorreturn)
+		return "", fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
+	}
+
+	defer resp.Body.Close()
+	return "", err
+}
+
+///////////////////
 func(c *Client) CreateServiceGroup(servicegroup ServiceGroup) ([]byte, error) {
 
 	spotBytes, _ := json.Marshal(servicegroup)
@@ -576,6 +807,107 @@ func(c *Client) DeleteDynamicObject(uid string) (string, error) {
 
   var jsonStr = []byte(fmt.Sprintf(`{"uid": "%v"}`, uid))
 	req, err := http.NewRequest("POST", c.base+"/delete-dynamic-object", bytes.NewBuffer(jsonStr))
+
+	if err != nil {
+		return "", err
+	}
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("X-chkp-sid", c.sid)
+	req.Header.Set("Accept", "application/json")
+	resp, err := c.client.Do(req)
+	if resp.StatusCode >= 400 {
+		var errorreturn APIError
+		body, _ := ioutil.ReadAll(resp.Body)
+		json.Unmarshal([]byte(body), &errorreturn)
+		return "", fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
+	}
+
+	defer resp.Body.Close()
+	return "", err
+}
+/////////////////////////////////////////
+func(c *Client) CreateTag(tag Tag) ([]byte, error) {
+
+	spotBytes, _ := json.Marshal(tag)
+	spotReader := bytes.NewReader(spotBytes)
+	req, err := http.NewRequest("POST", c.base+"/add-tag", spotReader)
+
+	if err != nil {
+		return nil, errors.New("Sorry something went wrong.  API busy??")
+	}
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("X-chkp-sid", c.sid)
+	req.Header.Set("Accept", "application/json")
+	resp, err := c.client.Do(req)
+	if resp.StatusCode >= 400 {
+		var errorreturn APIError
+		body, _ := ioutil.ReadAll(resp.Body)
+		json.Unmarshal([]byte(body), &errorreturn)
+		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
+	}
+
+	defer resp.Body.Close()
+	body, _ := ioutil.ReadAll(resp.Body)
+	return body, err
+}
+
+func(c *Client) SetTag(tag Tag) ([]byte, error) {
+
+	spotBytes, _ := json.Marshal(tag)
+	spotReader := bytes.NewReader(spotBytes)
+
+	req, err := http.NewRequest("POST", c.base+"/set-tag", spotReader)
+
+	if err != nil {
+		return nil, errors.New("Sorry something went wrong.  API busy??")
+	}
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("X-chkp-sid", c.sid)
+	req.Header.Set("Accept", "application/json")
+	resp, err := c.client.Do(req)
+	if resp.StatusCode >= 400 {
+		var errorreturn APIError
+		body, _ := ioutil.ReadAll(resp.Body)
+		json.Unmarshal([]byte(body), &errorreturn)
+		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
+	}
+
+	defer resp.Body.Close()
+	body, _ := ioutil.ReadAll(resp.Body)
+	return body, err
+}
+
+func(c *Client) ShowTag(taguid string) ([]byte, error) {
+
+  var jsonStr = []byte(fmt.Sprintf(`{"uid": "%v"}`, taguid))
+	req, err := http.NewRequest("POST", c.base+"/show-tag", bytes.NewBuffer(jsonStr))
+
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("X-chkp-sid", c.sid)
+	req.Header.Set("Accept", "application/json")
+	resp, err := c.client.Do(req)
+	if resp.StatusCode >= 400 {
+		var errorreturn APIError
+		body, _ := ioutil.ReadAll(resp.Body)
+		json.Unmarshal([]byte(body), &errorreturn)
+		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
+	}
+
+	defer resp.Body.Close()
+	type Uid struct {
+	                  Uid string
+					  			}
+	var uid Uid
+	body, _ := ioutil.ReadAll(resp.Body)
+	json.Unmarshal([]byte(body), &uid)
+
+	return body, err
+}
+
+func(c *Client) DeleteTag(uid string) (string, error) {
+
+  var jsonStr = []byte(fmt.Sprintf(`{"uid": "%v"}`, uid))
+	req, err := http.NewRequest("POST", c.base+"/delete-tag", bytes.NewBuffer(jsonStr))
 
 	if err != nil {
 		return "", err
@@ -1234,7 +1566,7 @@ func(c *Client) CreateAccessLayer(accesslayer AccessLayer) ([]byte, error) {
 	return body, err
 }
 
-func(c *Client) SetAccessLayer(accesslayer AccessLayerUpdate) ([]byte, error) {
+func(c *Client) SetAccessLayer(accesslayer AccessLayer) ([]byte, error) {
 
 	spotBytes, _ := json.Marshal(accesslayer)
 	spotReader := bytes.NewReader(spotBytes)

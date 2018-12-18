@@ -85,31 +85,28 @@ type AccessLayer struct {
 	Uid                  string              `json:"uid,omitempty"`
 	Name                 string              `json:"name,omitempty"`
 	Newname				       string			      	 `json:"new-name,omitempty"`
-	AppAndUrl            bool                `json:"applications-and-url-filtering,omitempty"`
+	AppAndUrl            bool                `json:"application-and-url-filtering,omitempty"`
 	ContentAwareness     bool			           `json:"content-awareness,omitempty"`
 	Firewall             bool			           `json:"firewall,omitempty"`
 	MobileAccess         bool			           `json:"mobile-access"`
 	Shared							 bool                `json:"shared,omitempty"`
 	Color                string              `json:"color,omitempty"`
 	Comments             string              `json:"comments,omitempty"`
-	AddDefaultRule       bool                `json:"add-default-rule"`
-}
-
-type AccessLayerUpdate struct {
-	Uid                  string              `json:"uid,omitempty"`
-	Name                 string              `json:"name,omitempty"`
-	Newname				       string			      	 `json:"new-name,omitempty"`
-	AppAndUrl            bool                `json:"applications-and-url-filtering,omitempty"`
-	ContentAwareness     bool			           `json:"content-awareness,omitempty"`
-	Firewall             bool			           `json:"firewall,omitempty"`
-	MobileAccess         bool			           `json:"mobile-access"`
-	Shared							 bool                `json:"shared,omitempty"`
-	Color                string              `json:"color,omitempty"`
-	Comments             string              `json:"comments,omitempty"`
-
+	AddDefaultRule       bool                `json:"add-default-rule,omitempty"`
 }
 
 type GroupMembers struct {
+        Uid            string							`json:"uid,omitempty"`
+        Name           string             `json:"name,omitempty"`
+        Color            string             `json:"color,omitempty"`
+        Members        []struct {
+                Uid          string       `json:"uid,omitempty"`
+                Name         string       `json:"name,omitempty"`
+                Type         string       `json:"type,omitempty"`
+        }
+}
+
+type ApplicationGroupMembers struct {
         Uid            string							`json:"uid,omitempty"`
         Name           string             `json:"name,omitempty"`
         Color            string             `json:"color,omitempty"`
@@ -139,6 +136,14 @@ type Group struct {
 	Newname				       string			 	       `json:"new-name,omitempty"`
 }
 
+type ApplicationGroup struct {
+	Uid                  string              `json:"uid,omitempty"`
+	Name                 string              `json:"name,omitempty"`
+	Color                string              `json:"color,omitempty"`
+	Members			       []string			 	       `json:"members,omitempty"`
+	Newname				       string			 	       `json:"new-name,omitempty"`
+}
+
 type ServiceGroup struct {
 	Uid                  string              `json:"uid,omitempty"`
 	Name                 string              `json:"name,omitempty"`
@@ -147,10 +152,58 @@ type ServiceGroup struct {
 	Newname				       string			 	       `json:"new-name,omitempty"`
 }
 
+type ApplicationSite struct {
+	Uid                  string              `json:"uid,omitempty"`
+	Name                 string              `json:"name,omitempty"`
+	PrimaryCategory      string              `json:"primary-category,omitempty"`
+	URLList              []string            `json:"url-list,omitempty"`
+	AdditionalCategories []string            `json:"additional-categories,omitempty"`
+	Color                string              `json:"color,omitempty"`
+	Description          string              `json:"description,omitempty"`
+	Tags			         []string			 	       `json:"tags,omitempty"`
+	Urlsdefinedasregularexpression bool	     `json:"urls-defined-as-regular-expression,omitempty"`
+	Newname				       string			 	       `json:"new-name,omitempty"`
+}
+
+type ApplicationSiteTagAddRemove struct {
+	Uid                  string              `json:"uid,omitempty"`
+	Name                 string              `json:"name,omitempty"`
+	PrimaryCategory      string              `json:"primary-category,omitempty"`
+	URLList              []string            `json:"url-list,omitempty"`
+	AdditionalCategories []string            `json:"additional-categories,omitempty"`
+	Color                string              `json:"color,omitempty"`
+	Description          string              `json:"description,omitempty"`
+	TagsAddRemove			         			 	       `json:"tags"`
+	Urlsdefinedasregularexpression bool	     `json:"urls-defined-as-regular-expression,omitempty"`
+	Newname				       string			 	       `json:"new-name,omitempty"`
+}
+
+
+type ApplicationSiteResult struct {
+	Uid                  string              `json:"uid,omitempty"`
+	Name                 string              `json:"name,omitempty"`
+	PrimaryCategory      string              `json:"primary-category,omitempty"`
+	URLList              []string            `json:"url-list,omitempty"`
+	AdditionalCategories []string            `json:"additional-categories,omitempty"`
+	Color                string              `json:"color,omitempty"`
+	Description          string              `json:"description,omitempty"`
+	Tags			                  		 	       `json:"tags,omitempty"`
+	Urlsdefinedasregularexpression bool	     `json:"urls-defined-as-regular-expression,omitempty"`
+	Newname				       string			 	       `json:"new-name,omitempty"`
+}
+
 type DynamicObject struct {
 	Uid                  string              `json:"uid,omitempty"`
 	Name                 string              `json:"name,omitempty"`
 	Color                string              `json:"color,omitempty"`
+	Newname				       string			 	       `json:"new-name,omitempty"`
+}
+
+type Tag struct {
+	Uid                  string              `json:"uid,omitempty"`
+	Name                 string              `json:"name,omitempty"`
+	Color                string              `json:"color,omitempty"`
+	Comments             string              `json:"comments,omitempty"`
 	Newname				       string			 	       `json:"new-name,omitempty"`
 }
 
@@ -369,6 +422,16 @@ type Source  []struct				 	{
 					Name						string				 `json:"name,omitempty"`
 					Uid						  string				 `json:"uid,omitempty"`
 					Type            string         `json:"type,omitempty"`
+									}
+
+type Tags  []struct				 	{
+					Name						string				 `json:"name,omitempty"`
+					Uid						  string				 `json:"uid,omitempty"`
+					Type            string         `json:"type,omitempty"`
+									}
+type TagsAddRemove  struct				 	{
+					Add						[]string				 `json:"add,omitempty"`
+					Remove			  []string				 `json:"remove,omitempty"`
 									}
 type Destination  []struct				 	{
 					Name						string				 `json:"name,omitempty"`
