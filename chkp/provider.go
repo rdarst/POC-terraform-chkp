@@ -40,7 +40,9 @@ func Provider() terraform.ResourceProvider {
                         "chkp_accessnatlist": resourceAccessNatRuleList(),
                         "chkp_addressrange": resourceAddressRange(),
                         "chkp_dnsdomain": resourceDNSDomain(),
-                        "chkp_accesslayerlist": resourceAccessLayerList(),
+                        "chkp_applicationsite": resourceApplicationSite(),
+                        "chkp_applicationgroup": resourceApplicationGroup(),
+                        "chkp_tag": resourceTag(),
 
                 },
                 DataSourcesMap:map[string]*schema.Resource{
