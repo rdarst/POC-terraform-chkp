@@ -1566,7 +1566,7 @@ func(c *Client) CreateAccessLayer(accesslayer AccessLayer) ([]byte, error) {
 	return body, err
 }
 
-func(c *Client) SetAccessLayer(accesslayer AccessLayer) ([]byte, error) {
+func(c *Client) SetAccessLayer(accesslayer AccessLayerUpdate) ([]byte, error) {
 
 	spotBytes, _ := json.Marshal(accesslayer)
 	spotReader := bytes.NewReader(spotBytes)

@@ -85,7 +85,7 @@ type AccessLayer struct {
 	Uid                  string              `json:"uid,omitempty"`
 	Name                 string              `json:"name,omitempty"`
 	Newname				       string			      	 `json:"new-name,omitempty"`
-	AppAndUrl            bool                `json:"application-and-url-filtering,omitempty"`
+	AppAndUrl            bool                `json:"applications-and-url-filtering,omitempty"`
 	ContentAwareness     bool			           `json:"content-awareness,omitempty"`
 	Firewall             bool			           `json:"firewall,omitempty"`
 	MobileAccess         bool			           `json:"mobile-access"`
@@ -93,6 +93,19 @@ type AccessLayer struct {
 	Color                string              `json:"color,omitempty"`
 	Comments             string              `json:"comments,omitempty"`
 	AddDefaultRule       bool                `json:"add-default-rule,omitempty"`
+}
+
+type AccessLayerUpdate struct {
+	Uid                  string              `json:"uid,omitempty"`
+	Name                 string              `json:"name,omitempty"`
+	Newname				       string			      	 `json:"new-name,omitempty"`
+	AppAndUrl            bool                `json:"applications-and-url-filtering,omitempty"`
+	ContentAwareness     bool			           `json:"content-awareness,omitempty"`
+	Firewall             bool			           `json:"firewall,omitempty"`
+	MobileAccess         bool			           `json:"mobile-access"`
+	Shared							 bool                `json:"shared,omitempty"`
+	Color                string              `json:"color,omitempty"`
+	Comments             string              `json:"comments,omitempty"`
 }
 
 type GroupMembers struct {
