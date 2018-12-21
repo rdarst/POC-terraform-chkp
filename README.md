@@ -14,3 +14,5 @@ login.py -u admin -p vpn123 -s 10.10.10.10
 terraform init
 
 terraform apply
+
+publish.py
