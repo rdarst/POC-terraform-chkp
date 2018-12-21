@@ -85,7 +85,7 @@ func resourceGroupRead(d *schema.ResourceData, meta interface{}) error {
   i := 0
   mem := make([]string, 0, len(group.Members))
   for _, member := range readGroup.Members {
-    mem = append(mem, group.Members[i].Uid)
+    mem = append(mem, group.Members[i].Name)
     _ = member
     i += 1
   }

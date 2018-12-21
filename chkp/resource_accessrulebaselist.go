@@ -370,7 +370,11 @@ func resourceAccessRulebaseListRead(d *schema.ResourceData, meta interface{}) er
 
           layerreturn := make(map[string]interface{})
           layerreturn["uid"] = ruleelement["uid"]
-          layerreturn["name"] = ruleelement["name"].(string)
+          // If name is empty don't populate array for name
+          if ruleelement["name"] != nil {
+            layerreturn["name"] = ruleelement["name"].(string)
+          }
+
         //  layerreturn["inlinelayer"] = ruleelement["inline-layer"].(string)
           layerreturn["enabled"] = ruleelement["enabled"].(bool)
           layerreturn["sourcenegate"] = ruleelement["source-negate"].(bool)
