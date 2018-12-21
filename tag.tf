@@ -5,5 +5,5 @@ resource "chkp_tag" "TerraformTag1" {
 
 resource "chkp_tag" "TerraformTag2" {
       name = "MyTerraformTag2"
-      color = "green"
+      color = "light green"
         }

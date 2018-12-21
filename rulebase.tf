@@ -44,7 +44,6 @@ resource "chkp_accessrulebaselist" "InitialRules" {
                 inlinelayer = "${chkp_accesslayerlist.LayerRules.name}"
                 track {
                       type = "None"
-                      perconnection = "false"
                       }
                     }
           rulebase {
