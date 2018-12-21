@@ -10,5 +10,7 @@ Login to a R80 server using the login utility to set a valid session id
 This python script can be found in the utils directory
 
 login.py -u admin -p vpn123 -s 10.10.10.10
+
 terraform init
+
 terraform apply
