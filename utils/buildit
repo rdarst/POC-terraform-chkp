@@ -1,0 +1,3 @@
+#Set your GOPATH and the compile the provider
+export GOPATH="/Users/ryan/go"
+/usr/local/go/bin/go build -o terraform-provider-chkp
