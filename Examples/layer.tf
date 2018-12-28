@@ -47,6 +47,7 @@ resource "chkp_accesslayerlist" "LayerRules" {
                 inlinelayer = "MyTestLayer"
                 track {
                       type = "None"
+                      perconnection = false
                       }
                     }
           rulebase {
