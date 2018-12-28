@@ -92,7 +92,7 @@ type AccessLayer struct {
 	Shared							 bool                `json:"shared,omitempty"`
 	Color                string              `json:"color,omitempty"`
 	Comments             string              `json:"comments,omitempty"`
-	AddDefaultRule       bool                `json:"add-default-rule,omitempty"`
+	AddDefaultRule       bool                `json:"add-default-rule"`
 }
 
 type AccessLayerUpdate struct {
