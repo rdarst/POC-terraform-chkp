@@ -29,7 +29,6 @@ func resourceAccessLayerList() *schema.Resource {
                   "adddefaultrule": {
                           Type:     schema.TypeBool,
                           Required: true,
-
                   },
                   "firewall": {
                           Type:     schema.TypeBool,
