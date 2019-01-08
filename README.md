@@ -3,7 +3,12 @@ Demo Terraform Provider for the Check Point R80 API
 
 Build the provider by installing go and compiling the provider
 
-Example - /usr/lib/go-1.10/bin/go build -o terraform-provider-chkp
+Example
+```
+sudo apt-get install golang-go
+/usr/lib/go-1.10/bin/go get github.com/hashicorp/terraform
+/usr/lib/go-1.10/bin/go build -o terraform-provider-chkp
+```
 
 Then in the directory with your terraform example .tf files do the following
 Login to a R80 server using the login utility to set a valid session id
