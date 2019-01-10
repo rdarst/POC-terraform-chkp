@@ -30,6 +30,6 @@ data "chkp_dynamicobject" "DMZNet" {
           name = "DMZNet"
 }
 
-data "chkp_dnsdomain" "googledotcom" {
-          name = ".google.com"
-}
+#data "chkp_dnsdomain" "googledotcom" {
+#          name = ".google.com"
+#}
