@@ -40,17 +40,6 @@ resource "chkp_accesslayerlist" "LayerRules" {
                     }
 
           rulebase {
-                name = "Layer Test"
-                source = ["${chkp_network.vnet_local.name}","${chkp_securityzone.mysecurityzone.name}"]
-                enabled = true
-                action = "Apply Layer"
-                inlinelayer = "MyTestLayer"
-                track {
-                      type = "None"
-                      perconnection = false
-                      }
-                    }
-          rulebase {
                 name = "Azure Health Checks"
                 source = ["${chkp_host.azurelbhealthcheck.name}"]
                 service = [ "${chkp_servicetcp.healthcheck.name}"]
