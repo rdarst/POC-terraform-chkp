@@ -2,12 +2,12 @@ resource "chkp_host" "jumphost" {
   ipv4address = "192.168.198.198"
   name = "jumphost"
   color = "blue"
-  natsettings {
-    autorule = true
-    hidebehind = "gateway"
-    method = "hide"
-    installon = "Test_GW"
-  }
+ # natsettings {
+ #   autorule = true
+ #   hidebehind = "gateway"
+ #   method = "hide"
+ #   installon = "Test_GW"
+ # }
     }
 
 resource "chkp_host" "ubuntu1" {
