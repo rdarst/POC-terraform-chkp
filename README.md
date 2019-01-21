@@ -21,9 +21,11 @@ login.py -u admin -p vpn123 -s 10.10.10.10
 
 Otherwise setup the two environment variables to allow terraform to pick up your R80 session details. 
 For example
+
 export CHKP_SID="oH9f7BaC-63kcF2fg3qokliwHPrXtCEIf4V8zvIpTmE"
 export CHKP_SERVER="https://10.10.10.10/web_api"
 
+Then use the standard terraform command to init/apply/destroy
 
 terraform init
 
