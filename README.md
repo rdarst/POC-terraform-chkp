@@ -1,6 +1,7 @@
 # terraform-chkp
-**Proof of concept Terraform Provider for the Check Point R80 API
-This provider is for testing purposes only!**
+**Proof of concept Terraform Provider for the Check Point R80 API**
+
+**This provider is for testing purposes only!**
 
 Only access based rules can be modifed with the current POC provider
 
