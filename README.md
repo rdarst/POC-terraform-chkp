@@ -1,12 +1,12 @@
 # terraform-chkp
 **Proof of concept Terraform Provider for the Check Point R80 API
-This provider is for testing purposes only!
+This provider is for testing purposes only!**
 
 Only access based rules can be modifed with the current POC provider
 
 Build the provider by installing go and compiling the provider
 
-**Example
+**Example**
 ```
 sudo apt-get install golang-go
 /usr/lib/go-1.10/bin/go get github.com/hashicorp/terraform
@@ -37,7 +37,7 @@ Use destroy to remove what was created
 
 terraform destroy
 
-**Notes -
+**Notes -**
 
 **When removing or adding rules via the rule list, this provider will not preserve UUID's of rules that were modifed.  This also applies to NAT rules as well.**
 
