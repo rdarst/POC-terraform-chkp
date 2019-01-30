@@ -9,6 +9,7 @@ Build the provider by installing go and compiling the provider
 
 **Example**
 ```
+git clone --recursive https://github.com/rdarst/POC-terraform-chkp
 sudo apt-get install golang-go
 /usr/lib/go-1.10/bin/go get github.com/hashicorp/terraform
 /usr/lib/go-1.10/bin/go build -o terraform-provider-chkp
