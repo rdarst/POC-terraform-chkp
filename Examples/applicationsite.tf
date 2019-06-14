@@ -3,6 +3,6 @@ resource "chkp_applicationsite" "myapplicationsite" {
       color = "light green"
       urllist = ["www.google.com",  "www.ebay.com", "www.amazon.com", "www.core.com"]
       primarycategory = "Social Networking"
-      additionalcategories = ["Instant Chat", "Supports Streaming"]
+      additionalcategories = ["Instant Chat", "Critical Risk"]
       #tags = ["MyTagTest","MyOtherTag"]
 }
