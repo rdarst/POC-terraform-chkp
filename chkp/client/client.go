@@ -104,13 +104,18 @@ func(c *Client) CreateHost(host Host) ([]byte, error) {
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400 {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return nil,err
+  }
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
 	return body, err
 }
@@ -128,14 +133,18 @@ func(c *Client) SetHost(host Host) ([]byte, error) {
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400 {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return nil,err
+  }
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-
-	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
 	return body, err
 }
@@ -149,14 +158,23 @@ func(c *Client) ShowHost(hostuid string) ([]byte, error) {
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400 {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return nil,err
+  }
+	// If we receive a 404 then the host is not found via uid and send nil
+	if (resp.StatusCode == 404) {
+		return nil, fmt.Errorf("%v",resp.StatusCode)
+	}
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
 
-	defer resp.Body.Close()
 	type Uid struct {
 	                  Uid string
 					  			}
@@ -177,15 +195,20 @@ func(c *Client) DeleteHost(uid string) (string, error) {
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
+	//time.Sleep(10000 * time.Millisecond)
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400 {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return "",err
+  }
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return "", fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-
-	defer resp.Body.Close()
 	return "", err
 }
 
@@ -203,13 +226,18 @@ func(c *Client) CreateAddressRange(addressrange AddressRange) ([]byte, error) {
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400 {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return nil,err
+  }
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
 	return body, err
 }
@@ -227,14 +255,18 @@ func(c *Client) SetAddressRange(addressrange AddressRange) ([]byte, error) {
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400 {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return nil,err
+  }
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-
-	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
 	return body, err
 }
@@ -248,14 +280,18 @@ func(c *Client) ShowAddressRange(addressrangeuid string) ([]byte, error) {
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400 {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return nil,err
+  }
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-
-	defer resp.Body.Close()
 	type Uid struct {
 	                  Uid string
 					  			}
@@ -278,14 +314,18 @@ func(c *Client) DeleteAddressRange(uid string) (string, error) {
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400 {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return "",err
+  }
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return "", fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-
-	defer resp.Body.Close()
 	return "", err
 }
 
@@ -303,14 +343,18 @@ func(c *Client) CreateGroup(group Group) ([]byte, error) {
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400 {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return nil,err
+  }
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-
-	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
 	return body, err
 }
@@ -329,14 +373,18 @@ func(c *Client) SetGroup(group Group) ([]byte, error) {
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400 {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return nil,err
+  }
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-
-	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
 	return body, err
 }
@@ -350,14 +398,22 @@ func(c *Client) ShowGroup(groupuid string) ([]byte, error) {
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400 {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return nil,err
+  }
+	// If we receive a 404 then the host is not found via uid and send nil
+	if (resp.StatusCode == 404) {
+		return nil, fmt.Errorf("%v",resp.StatusCode)
+	}
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-
-	defer resp.Body.Close()
 	type Uid struct {
 	                  Uid string
 					  			}
@@ -380,14 +436,18 @@ func(c *Client) DeleteGroup(uid string) (string, error) {
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400 {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return "",err
+  }
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return "", fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-
-	defer resp.Body.Close()
 	return "", err
 }
 ////////////////////
@@ -405,14 +465,18 @@ func(c *Client) CreateApplicationGroup(applicationgroup ApplicationGroup) ([]byt
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400 {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return nil,err
+  }
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-
-	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
 	return body, err
 }
@@ -431,14 +495,18 @@ func(c *Client) SetApplicationGroup(applicationgroup ApplicationGroup) ([]byte, 
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400 {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return nil,err
+  }
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-
-	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
 	return body, err
 }
@@ -452,14 +520,18 @@ func(c *Client) ShowApplicationGroup(applicationgroupuid string) ([]byte, error)
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400 {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return nil,err
+  }
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-
-	defer resp.Body.Close()
 	type Uid struct {
 	                  Uid string
 					  			}
@@ -482,14 +554,18 @@ func(c *Client) DeleteApplicationGroup(uid string) (string, error) {
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400 {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return "",err
+  }
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return "", fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-
-	defer resp.Body.Close()
 	return "", err
 }
 ////////////////////
@@ -507,14 +583,18 @@ func(c *Client) CreateApplicationSite(group ApplicationSite) ([]byte, error) {
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400 {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return nil,err
+  }
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-
-	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
 	return body, err
 }
@@ -533,14 +613,18 @@ func(c *Client) SetApplicationSite(group ApplicationSite) ([]byte, error) {
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400 {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return nil,err
+  }
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-
-	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
 	return body, err
 }
@@ -559,14 +643,18 @@ func(c *Client) SetApplicationSiteUpdateTag(group ApplicationSiteTagAddRemove) (
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400 {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return nil,err
+  }
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-
-	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
 	return body, err
 }
@@ -580,17 +668,19 @@ func(c *Client) ShowApplicationSite(groupuid string) ([]byte, error) {
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400 {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return nil,err
+  }
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
 
-	defer resp.Body.Close()
-	type Uid struct {
-	                  Uid string
-					  			}
 	var uid Uid
 	body, _ := ioutil.ReadAll(resp.Body)
 	json.Unmarshal([]byte(body), &uid)
@@ -610,14 +700,18 @@ func(c *Client) DeleteApplicationSite(uid string) (string, error) {
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400 {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return "",err
+  }
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return "", fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-
-	defer resp.Body.Close()
 	return "", err
 }
 
@@ -636,14 +730,18 @@ func(c *Client) CreateServiceGroup(servicegroup ServiceGroup) ([]byte, error) {
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400 {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return nil,err
+  }
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-
-	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
 	return body, err
 }
@@ -662,14 +760,18 @@ func(c *Client) SetServiceGroup(servicegroup ServiceGroup) ([]byte, error) {
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400 {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return nil,err
+  }
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-
-	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
 	return body, err
 }
@@ -683,17 +785,23 @@ func(c *Client) ShowServiceGroup(servicegroupuid string) ([]byte, error) {
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400 {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return nil,err
+  }
+	// If we receive a 404 then the host is not found via uid and send nil
+	if (resp.StatusCode == 404) {
+		return nil, fmt.Errorf("%v",resp.StatusCode)
+	}
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
 
-	defer resp.Body.Close()
-	type Uid struct {
-	                  Uid string
-					  			}
 	var uid Uid
 	body, _ := ioutil.ReadAll(resp.Body)
 	json.Unmarshal([]byte(body), &uid)
@@ -713,14 +821,18 @@ func(c *Client) DeleteServiceGroup(uid string) (string, error) {
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400 {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return "",err
+  }
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return "", fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-
-	defer resp.Body.Close()
 	return "", err
 }
 
@@ -738,14 +850,18 @@ func(c *Client) CreateDynamicObject(dynamicobject DynamicObject) ([]byte, error)
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400 {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return nil,err
+  }
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-
-	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
 	return body, err
 }
@@ -764,14 +880,18 @@ func(c *Client) SetDynamicObject(dynamicobject DynamicObject) ([]byte, error) {
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400 {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return nil,err
+  }
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-
-	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
 	return body, err
 }
@@ -785,17 +905,22 @@ func(c *Client) ShowDynamicObject(dynamicobjectuid string) ([]byte, error) {
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400 {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return nil,err
+  }
+	// If we receive a 404 then the host is not found via uid and send nil
+	if (resp.StatusCode == 404) {
+		return nil, fmt.Errorf("%v",resp.StatusCode)
+	}
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-
-	defer resp.Body.Close()
-	type Uid struct {
-	                  Uid string
-					  			}
 	var uid Uid
 	body, _ := ioutil.ReadAll(resp.Body)
 	json.Unmarshal([]byte(body), &uid)
@@ -815,14 +940,18 @@ func(c *Client) DeleteDynamicObject(uid string) (string, error) {
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400 {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return "",err
+  }
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return "", fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-
-	defer resp.Body.Close()
 	return "", err
 }
 /////////////////////////////////////////
@@ -839,14 +968,18 @@ func(c *Client) CreateTag(tag Tag) ([]byte, error) {
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400 {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return nil,err
+  }
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-
-	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
 	return body, err
 }
@@ -865,14 +998,18 @@ func(c *Client) SetTag(tag Tag) ([]byte, error) {
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400 {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return nil,err
+  }
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-
-	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
 	return body, err
 }
@@ -886,17 +1023,22 @@ func(c *Client) ShowTag(taguid string) ([]byte, error) {
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400 {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return nil,err
+  }
+	// If we receive a 404 then the host is not found via uid and send nil
+	if (resp.StatusCode == 404) {
+		return nil, fmt.Errorf("%v",resp.StatusCode)
+	}
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-
-	defer resp.Body.Close()
-	type Uid struct {
-	                  Uid string
-					  			}
 	var uid Uid
 	body, _ := ioutil.ReadAll(resp.Body)
 	json.Unmarshal([]byte(body), &uid)
@@ -916,14 +1058,18 @@ func(c *Client) DeleteTag(uid string) (string, error) {
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400 {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return "",err
+  }
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return "", fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-
-	defer resp.Body.Close()
 	return "", err
 }
 /////////////////////////////////////////
@@ -940,14 +1086,18 @@ func(c *Client) CreateSecurityZone(securityzone SecurityZone) ([]byte, error) {
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400 {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return nil,err
+  }
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-
-	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
 	return body, err
 }
@@ -966,14 +1116,18 @@ func(c *Client) SetSecurityZone(securityzone SecurityZone) ([]byte, error) {
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400 {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return nil,err
+  }
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-
-	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
 	return body, err
 }
@@ -987,17 +1141,22 @@ func(c *Client) ShowSecurityZone(securityzoneuid string) ([]byte, error) {
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400 {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return nil,err
+  }
+	// If we receive a 404 then the host is not found via uid and send nil
+	if (resp.StatusCode == 404) {
+		return nil, fmt.Errorf("%v",resp.StatusCode)
+	}
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-
-	defer resp.Body.Close()
-	type Uid struct {
-	                  Uid string
-					  			}
 	var uid Uid
 	body, _ := ioutil.ReadAll(resp.Body)
 	json.Unmarshal([]byte(body), &uid)
@@ -1017,14 +1176,18 @@ func(c *Client) DeleteSecurityZone(uid string) (string, error) {
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400 {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return "",err
+  }
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return "", fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-
-	defer resp.Body.Close()
 	return "", err
 }
 /////////////////////////////////////////
@@ -1042,14 +1205,18 @@ func(c *Client) CreateDNSDomain(dnsdomain DNSDomain) ([]byte, error) {
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400 {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return nil,err
+  }
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-
-	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
 	return body, err
 }
@@ -1068,14 +1235,18 @@ func(c *Client) SetDNSDomain(dnsdomain DNSDomain) ([]byte, error) {
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400 {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return nil,err
+  }
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-
-	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
 	return body, err
 }
@@ -1089,17 +1260,22 @@ func(c *Client) ShowDNSDomain(dnsdomainuid string) ([]byte, error) {
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400 {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return nil,err
+  }
+	// If we receive a 404 then the host is not found via uid and send nil
+	if (resp.StatusCode == 404) {
+		return nil, fmt.Errorf("%v",resp.StatusCode)
+	}
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-
-	defer resp.Body.Close()
-	type Uid struct {
-	                  Uid string
-					  			}
 	var uid Uid
 	body, _ := ioutil.ReadAll(resp.Body)
 	json.Unmarshal([]byte(body), &uid)
@@ -1119,14 +1295,18 @@ func(c *Client) DeleteDNSDomain(uid string) (string, error) {
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400 {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return "",err
+  }
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return "", fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-
-	defer resp.Body.Close()
 	return "", err
 }
 /////////////////////////////////////////
@@ -1147,14 +1327,18 @@ func(c *Client) CreateNetwork(network Network) ([]byte, error) {
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400 {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return nil,err
+  }
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-
-	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
 	return body, err
 }
@@ -1173,14 +1357,18 @@ func(c *Client) SetNetwork(network Network) ([]byte, error) {
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400 {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return nil,err
+  }
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-
-	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
 	return body, err
 }
@@ -1194,14 +1382,22 @@ func(c *Client) ShowNetwork(networkuid string) ([]byte, error) {
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400 {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return nil,err
+  }
+	// If we receive a 404 then the host is not found via uid and send nil
+	if (resp.StatusCode == 404) {
+		return nil, fmt.Errorf("%v",resp.StatusCode)
+	}
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-
-	defer resp.Body.Close()
 
 	body, _ := ioutil.ReadAll(resp.Body)
 
@@ -1220,14 +1416,18 @@ func(c *Client) DeleteNetwork(uid string) (string, error) {
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400 {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return "",err
+  }
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return "", fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-
-	defer resp.Body.Close()
 	return "", err
 }
 
@@ -1245,14 +1445,18 @@ func(c *Client) CreateServiceTcp(servicetcp ServiceTcp) ([]byte, error) {
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400 {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return nil,err
+  }
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-
-	defer resp.Body.Close()
 
 	body, _ := ioutil.ReadAll(resp.Body)
 
@@ -1273,14 +1477,18 @@ func(c *Client) SetServiceTcp(servicetcp ServiceTcp) ([]byte, error) {
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400  {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return nil,err
+  }
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-
-	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
 	return body, err
 }
@@ -1294,17 +1502,22 @@ func(c *Client) ShowServiceTcp(servicetcpuid string) ([]byte, error) {
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400 {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return nil,err
+  }
+	// If we receive a 404 then the host is not found via uid and send nil
+	if (resp.StatusCode == 404) {
+		return nil, fmt.Errorf("%v",resp.StatusCode)
+	}
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-
-	defer resp.Body.Close()
-	type Uid struct {
-	                  Uid string
-					  			}
 	var uid Uid
 	body, _ := ioutil.ReadAll(resp.Body)
 	json.Unmarshal([]byte(body), &uid)
@@ -1324,14 +1537,18 @@ func(c *Client) DeleteServiceTcp(uid string) (string, error) {
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400 {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return "",err
+  }
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return "", fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-
-	defer resp.Body.Close()
 	return "", err
 }
 
@@ -1349,14 +1566,18 @@ func(c *Client) CreateServiceUdp(serviceudp ServiceUdp) ([]byte, error) {
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400 {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return nil,err
+  }
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-
-	defer resp.Body.Close()
 
 	body, _ := ioutil.ReadAll(resp.Body)
 
@@ -1377,14 +1598,18 @@ func(c *Client) SetServiceUdp(serviceudp ServiceUdp) ([]byte, error) {
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400  {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return nil,err
+  }
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-
-	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
 	return body, err
 }
@@ -1398,17 +1623,22 @@ func(c *Client) ShowServiceUdp(serviceudpuid string) ([]byte, error) {
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400 {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return nil,err
+  }
+	// If we receive a 404 then the host is not found via uid and send nil
+	if (resp.StatusCode == 404) {
+		return nil, fmt.Errorf("%v",resp.StatusCode)
+	}
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-
-	defer resp.Body.Close()
-	type Uid struct {
-	                  Uid string
-					  			}
 	var uid Uid
 	body, _ := ioutil.ReadAll(resp.Body)
 	json.Unmarshal([]byte(body), &uid)
@@ -1428,13 +1658,18 @@ func(c *Client) DeleteServiceUdp(uid string) (string, error) {
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400 {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return "",err
+  }
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return "", fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-	defer resp.Body.Close()
 	return "", err
 }
 
@@ -1452,14 +1687,18 @@ func(c *Client) CreatePolicyPackage(policypackage PolicyPackage) ([]byte, error)
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400 {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return nil,err
+  }
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-
-	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
 	return body, err
 }
@@ -1478,14 +1717,18 @@ func(c *Client) SetPolicyPackage(policypackage PolicyPackage) ([]byte, error) {
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400  {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return nil,err
+  }
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-
-	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
 	return body, err
 }
@@ -1499,17 +1742,22 @@ func(c *Client) ShowPolicyPackage(policypackageuid string) ([]byte, error) {
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400 {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return nil,err
+  }
+	// If we receive a 404 then the host is not found via uid and send nil
+	if (resp.StatusCode == 404) {
+		return nil, fmt.Errorf("%v",resp.StatusCode)
+	}
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-
-	defer resp.Body.Close()
-	type Uid struct {
-	                  Uid string
-					  			}
 	var uid Uid
 	body, _ := ioutil.ReadAll(resp.Body)
 	json.Unmarshal([]byte(body), &uid)
@@ -1528,14 +1776,18 @@ func(c *Client) DeletePolicyPackage(uid string) (string, error) {
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400 {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return "",err
+  }
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return "", fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-
-	defer resp.Body.Close()
 	//c.Publish(c.sid)
 	return "", err
 }
@@ -1554,14 +1806,18 @@ func(c *Client) CreateAccessLayer(accesslayer AccessLayer) ([]byte, error) {
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400 {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return nil,err
+  }
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-
-	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
 	return body, err
 }
@@ -1580,14 +1836,18 @@ func(c *Client) SetAccessLayer(accesslayer AccessLayerUpdate) ([]byte, error) {
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400  {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return nil,err
+  }
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-
-	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
 	return body, err
 }
@@ -1601,17 +1861,22 @@ func(c *Client) ShowAccessLayer(accesslayeruid string) ([]byte, error) {
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400 {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return nil,err
+  }
+	// If we receive a 404 then the host is not found via uid and send nil
+	if (resp.StatusCode == 404) {
+		return nil, fmt.Errorf("%v",resp.StatusCode)
+	}
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-
-	defer resp.Body.Close()
-	type Uid struct {
-	                  Uid string
-					  			}
 	var uid Uid
 	body, _ := ioutil.ReadAll(resp.Body)
 	json.Unmarshal([]byte(body), &uid)
@@ -1630,15 +1895,18 @@ func(c *Client) DeleteAccessLayer(uid string) (string, error) {
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400 {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return "",err
+  }
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return "", fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-
-	defer resp.Body.Close()
-	//c.Publish(c.sid)
 	return "", err
 }
 
@@ -1656,14 +1924,18 @@ func(c *Client) CreateAccessRulebase(accessrulebase AccessRulebase) ([]byte, err
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400 {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return nil,err
+  }
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-
-	defer resp.Body.Close()
 
 	body, _ := ioutil.ReadAll(resp.Body)
 
@@ -1684,14 +1956,18 @@ func(c *Client) SetAccessRulebase(accessrulebase AccessRulebase) ([]byte, error)
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400  {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return nil,err
+  }
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-
-	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
 	return body, err
 }
@@ -1705,15 +1981,22 @@ func(c *Client) ShowAccessRulebase(accessrulebaseuid string, accessrulebaselayer
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-
-	if resp.StatusCode >= 400 {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return nil,err
+  }
+	// If we receive a 404 then the host is not found via uid and send nil
+	if (resp.StatusCode == 404) {
+		return nil, fmt.Errorf("%v",resp.StatusCode)
+	}
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-
-	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
 	return body, err
 }
@@ -1727,18 +2010,22 @@ func(c *Client) ShowAccessRulebaseByName(accessrulebasename string, accessruleba
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-  //If object is not found 404 is sent
-	if resp.StatusCode == 404 {
-		return nil, err
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return nil,err
+  }
+	// If we receive a 404 then the host is not found via uid and send nil
+	if (resp.StatusCode == 404) {
+		return nil, fmt.Errorf("%v",resp.StatusCode)
 	}
-	if resp.StatusCode >= 400 {
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-
-	defer resp.Body.Close()
 
 	body, _ := ioutil.ReadAll(resp.Body)
 
@@ -1756,15 +2043,18 @@ func(c *Client) DeleteAccessRulebase(accessrulebaseuid string, accessrulebaselay
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400 {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return "",err
+  }
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return "", fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-
-	defer resp.Body.Close()
-	//c.Publish(c.sid)
 	return "", err
 }
 
@@ -1780,14 +2070,18 @@ func(c *Client) DeleteAccessRuleByName(accessrulebasename string, accessrulebase
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400 {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return "",err
+  }
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return "", fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-
-	defer resp.Body.Close()
 	return "", err
 }
 
@@ -1803,14 +2097,18 @@ func(c *Client) DeleteAccessRuleByRuleNum(accessrulebaserulenum int, accessruleb
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400 {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return "",err
+  }
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return "", fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-
-	defer resp.Body.Close()
 	return "", err
 }
 
@@ -1828,14 +2126,18 @@ func(c *Client) CreateAccessRulebaseList(accessrulebase AccessRulebaseList) ([]b
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400 {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return nil,err
+  }
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-
-	defer resp.Body.Close()
 
 	body, _ := ioutil.ReadAll(resp.Body)
 
@@ -1856,14 +2158,18 @@ func(c *Client) SetAccessRulebaseList(accessrulebase AccessRulebaseList) ([]byte
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400 {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return nil,err
+  }
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-
-	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
 	return body, err
 }
@@ -1878,18 +2184,22 @@ func(c *Client) ShowAccessRulebaseList(accessrulebaselayer string,limit int, off
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-  //If object is not found 404 is sent
-	if resp.StatusCode == 404 {
-		return nil, err
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return nil,err
+  }
+	// If we receive a 404 then the host is not found via uid and send nil
+	if (resp.StatusCode == 404) {
+		return nil, fmt.Errorf("%v",resp.StatusCode)
 	}
-	if resp.StatusCode >= 400 {
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-
-	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
 	return body, err
 }
@@ -1903,18 +2213,22 @@ func(c *Client) ShowNATRulebaseList(packageuid string,limit int, offset int) ([]
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-  //If object is not found 404 is sent
-	if resp.StatusCode == 404 {
-		return nil, err
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return nil,err
+  }
+	// If we receive a 404 then the host is not found via uid and send nil
+	if (resp.StatusCode == 404) {
+		return nil, fmt.Errorf("%v",resp.StatusCode)
 	}
-	if resp.StatusCode >= 400 {
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-
-	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
 	return body, err
 }
@@ -1934,14 +2248,18 @@ func(c *Client) CreateAccessSection(accesssection AccessSection) ([]byte, error)
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400 {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return nil,err
+  }
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-
-	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
 	return body, err
 }
@@ -1960,14 +2278,18 @@ func(c *Client) SetAccessSection(accesssection AccessSectionUpdate) ([]byte, err
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400  {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return nil,err
+  }
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-
-	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
 	return body, err
 }
@@ -1982,15 +2304,22 @@ func(c *Client) ShowAccessSection(accesssectionuid string, accesssectionlayer st
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-
-	if resp.StatusCode >= 400 {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return nil,err
+  }
+	// If we receive a 404 then the host is not found via uid and send nil
+	if (resp.StatusCode == 404) {
+		return nil, fmt.Errorf("%v",resp.StatusCode)
+	}
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-
-	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
 	return body, err
 }
@@ -2007,15 +2336,47 @@ func(c *Client) DeleteAccessSection(accesssectionuid string, accesssectionlayer 
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400 {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return "",err
+  }
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return "", fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-
-	defer resp.Body.Close()
 	return "", err
+}
+func(c *Client) ShowHostByName(hostname string) ([]byte, error) {
+
+  var jsonStr = []byte(fmt.Sprintf(`{"name": "%v"}`, hostname))
+	req, err := http.NewRequest("POST", c.base+"/show-host", bytes.NewBuffer(jsonStr))
+
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("X-chkp-sid", c.sid)
+	req.Header.Set("Accept", "application/json")
+	resp, err := c.client.Do(req)
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return nil,err
+  }
+	// If we receive a 404 then the host is not found via uid and send nil
+	if (resp.StatusCode == 404) {
+		return nil, fmt.Errorf("%v",resp.StatusCode)
+	}
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
+		var errorreturn APIError
+		body, _ := ioutil.ReadAll(resp.Body)
+		json.Unmarshal([]byte(body), &errorreturn)
+		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
+	}
+	body, _ := ioutil.ReadAll(resp.Body)
+	return body, err
 }
 
 func(c *Client) ReadHostData(hostname string) ([]byte, error) {
@@ -2027,14 +2388,22 @@ func(c *Client) ReadHostData(hostname string) ([]byte, error) {
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400 {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return nil,err
+  }
+	// If we receive a 404 then the host is not found via uid and send nil
+	if (resp.StatusCode == 404) {
+		return nil, fmt.Errorf("%v",resp.StatusCode)
+	}
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-
-	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
 	return body, err
 }
@@ -2048,14 +2417,22 @@ func(c *Client) ReadAddressRangeData(hostname string) ([]byte, error) {
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400 {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return nil,err
+  }
+	// If we receive a 404 then the host is not found via uid and send nil
+	if (resp.StatusCode == 404) {
+		return nil, fmt.Errorf("%v",resp.StatusCode)
+	}
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-
-	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
 	return body, err
 }
@@ -2069,14 +2446,22 @@ func(c *Client) ReadServiceTcpData(servicetcpname string) ([]byte, error) {
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400 {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return nil,err
+  }
+	// If we receive a 404 then the host is not found via uid and send nil
+	if (resp.StatusCode == 404) {
+		return nil, fmt.Errorf("%v",resp.StatusCode)
+	}
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-
-	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
 	return body, err
 }
@@ -2090,14 +2475,22 @@ func(c *Client) ReadServiceUdpData(serviceudpname string) ([]byte, error) {
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400 {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return nil,err
+  }
+	// If we receive a 404 then the host is not found via uid and send nil
+	if (resp.StatusCode == 404) {
+		return nil, fmt.Errorf("%v",resp.StatusCode)
+	}
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-
-	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
 	return body, err
 }
@@ -2110,14 +2503,22 @@ func(c *Client) ReadLayerUIDtoName(layeruid string) (string, error) {
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400 {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return "",err
+  }
+	// If we receive a 404 then the host is not found via uid and send nil
+	if (resp.StatusCode == 404) {
+		return "", fmt.Errorf("%v",resp.StatusCode)
+	}
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return "", fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-
-	defer resp.Body.Close()
 
 	body, _ := ioutil.ReadAll(resp.Body)
 	accesslayer := AccessLayer{}
@@ -2135,14 +2536,22 @@ func(c *Client) ReadLayerNametoUID(layername string) (string, error) {
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400 {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return "",err
+  }
+	// If we receive a 404 then the host is not found via uid and send nil
+	if (resp.StatusCode == 404) {
+		return "", fmt.Errorf("%v",resp.StatusCode)
+	}
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return "", fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-
-	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
 	accesslayer := AccessLayer{}
   json.Unmarshal(body, &accesslayer)
@@ -2158,14 +2567,18 @@ func(c *Client) CreateNATSection(packagename string, position string, name strin
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400 {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return "",err
+  }
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return "", fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-
-	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
 	natsection := NATSection{}
   json.Unmarshal(body, &natsection)
@@ -2185,8 +2598,18 @@ func(c *Client) Publish(sid string) (string, error) {
 	req.Header.Set("X-chkp-sid", sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-
-	defer resp.Body.Close()
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return "",err
+  }
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
+		var errorreturn APIError
+		body, _ := ioutil.ReadAll(resp.Body)
+		json.Unmarshal([]byte(body), &errorreturn)
+		return "", fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
+	}
 
   var taskid Taskid
 	body, _ := ioutil.ReadAll(resp.Body)
@@ -2211,11 +2634,77 @@ func(c *Client) CheckTaskid(taskid string) (string, error) {
 	req.Header.Set("Accept", "application/json")
 	//time.Sleep(500 * time.Millisecond)
 	resp, err := c.client.Do(req)
+	if resp != nil {
     defer resp.Body.Close()
+  }
+	if err != nil {
+    return "",err
+  }
+	// If we receive a 404 then the host is not found via uid and send nil
+	if (resp.StatusCode == 404) {
+		return "", fmt.Errorf("%v",resp.StatusCode)
+	}
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
+		var errorreturn APIError
+		body, _ := ioutil.ReadAll(resp.Body)
+		json.Unmarshal([]byte(body), &errorreturn)
+		return "", fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
+	}
 	body, _ := ioutil.ReadAll(resp.Body)
 	_ = body
 
 	return "failed", err
+}
+
+func(c *Client) CheckWhereUsed(uid string) (int, error) {
+  // Function used to see if object is still used before delete
+	// Returns the Total of directly used rules/groups/etc
+	var jsonStr = []byte(fmt.Sprintf(`{"uid": "%v", "dereference-group-members": "false", "show-membership": "false"}}`, uid))
+
+	req, err := http.NewRequest("POST", c.base+"/where-used", bytes.NewBuffer(jsonStr))
+	if err != nil {
+		return 0, err
+	}
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("X-chkp-sid", c.sid)
+	req.Header.Set("Accept", "application/json")
+	resp, err := c.client.Do(req)
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return 0,err
+  }
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
+		var errorreturn APIError
+		body, _ := ioutil.ReadAll(resp.Body)
+		json.Unmarshal([]byte(body), &errorreturn)
+		return 0, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
+	}
+
+		var whereused WhereUsed
+		body, _ := ioutil.ReadAll(resp.Body)
+		json.Unmarshal([]byte(body), &whereused)
+		total := whereused.UsedDirectly.Total
+		return total, err
+}
+
+func(c *Client) WaitUntilNotUsed(uid string) (int, error) {
+  // Function used to check to see when an object is not used directly
+	// Wait up to 120 seconds for the object to become free
+  sum := 1
+	for sum < 24 {
+	   time.Sleep(5 * time.Second)
+	   used, err := c.CheckWhereUsed(uid)
+	   if err != nil {
+		    return 0, err
+	      }
+	   if used == 0 {
+        return 0, err
+        }
+     sum++
+    }
+  return 1, fmt.Errorf("Object with UID %v is still in use!!!", uid)
 }
 
 func(c *Client) Logout() (string, error) {
@@ -2230,8 +2719,18 @@ func(c *Client) Logout() (string, error) {
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-
-	defer resp.Body.Close()
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return "",err
+  }
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
+		var errorreturn APIError
+		body, _ := ioutil.ReadAll(resp.Body)
+		json.Unmarshal([]byte(body), &errorreturn)
+		return "", fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
+	}
 
 	return "1", err
 }
@@ -2250,14 +2749,18 @@ func(c *Client) CreateAccessNATRulebaseList(natrulebase AccessRulebaseNATList) (
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400 {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return nil,err
+  }
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-
-	defer resp.Body.Close()
 
 	body, _ := ioutil.ReadAll(resp.Body)
 
@@ -2278,14 +2781,18 @@ func(c *Client) SetAccessNATRulebaseList(natrulebase AccessRulebaseNATListSet) (
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400 {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return nil,err
+  }
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-
-	defer resp.Body.Close()
 
 	body, _ := ioutil.ReadAll(resp.Body)
 
@@ -2305,15 +2812,18 @@ func(c *Client) DeleteAccessNATRule(uid string, packageuid string) ([]byte, erro
 	req.Header.Set("X-chkp-sid", c.sid)
 	req.Header.Set("Accept", "application/json")
 	resp, err := c.client.Do(req)
-	if resp.StatusCode >= 400 {
+	if resp != nil {
+    defer resp.Body.Close()
+  }
+	if err != nil {
+    return nil,err
+  }
+	if !(resp.StatusCode >= 200 && resp.StatusCode <=299) {
 		var errorreturn APIError
 		body, _ := ioutil.ReadAll(resp.Body)
 		json.Unmarshal([]byte(body), &errorreturn)
 		return nil, fmt.Errorf("%d Error returned from R80API.  %v", resp.StatusCode, errorreturn)
 	}
-
-	defer resp.Body.Close()
-
 	body, _ := ioutil.ReadAll(resp.Body)
 
 	return body, err

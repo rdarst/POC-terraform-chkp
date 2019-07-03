@@ -99,8 +99,8 @@ type AccessLayerUpdate struct {
 	Uid                  string              `json:"uid,omitempty"`
 	Name                 string              `json:"name,omitempty"`
 	Newname				       string			      	 `json:"new-name,omitempty"`
-	AppAndUrl            bool                `json:"applications-and-url-filtering,omitempty"`
-	ContentAwareness     bool			           `json:"content-awareness,omitempty"`
+	AppAndUrl            bool                `json:"applications-and-url-filtering"`
+	ContentAwareness     bool			           `json:"content-awareness"`
 	Firewall             bool			           `json:"firewall,omitempty"`
 	MobileAccess         bool			           `json:"mobile-access"`
 	Shared							 bool                `json:"shared,omitempty"`
@@ -190,7 +190,6 @@ type ApplicationSiteTagAddRemove struct {
 	Urlsdefinedasregularexpression bool	     `json:"urls-defined-as-regular-expression,omitempty"`
 	Newname				       string			 	       `json:"new-name,omitempty"`
 }
-
 
 type ApplicationSiteResult struct {
 	Uid                  string              `json:"uid,omitempty"`
@@ -346,7 +345,7 @@ type AccessSectionUpdate struct {
 type Track                struct				 	{
 					Type						string				 `json:"type,omitempty"`
 					Alert						string				 `json:"alert,omitempty"`
-					Accounting      bool           `json:"accounting,omitempty"`
+					Accounting      bool           `json:"accounting"`
 					PerConnection   bool           `json:"per-connection,omitempty"`
 					PerSession      bool           `json:"per-session,omitempty"`
 				}
@@ -511,5 +510,17 @@ type Taskid struct {
 
 type ErrorMessage struct {
     Code               string              `json:"code"`
-		Message              string              `json:"message"`
+		Message            string              `json:"message"`
 }
+
+type WhereUsed struct {
+	UsedDirectly 											    `json:"used-directly"`
+	}
+
+type UsedDirectly struct {
+	Total                 int           `json:"total"`
+	        								}
+
+type Uid struct {
+									Uid string
+								}
