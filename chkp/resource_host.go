@@ -4,6 +4,7 @@ import (
         "github.com/hashicorp/terraform/helper/schema"
         "./client"
     		"encoding/json"
+        //"fmt"
 )
 
 
@@ -107,6 +108,7 @@ func resourceHostCreate(d *schema.ResourceData, meta interface{}) error {
   json.Unmarshal(id, &readHost)
 	d.SetId(readHost.Uid)
   d.Set("uid", readHost.Uid)
+  d.Set("name", readHost.Name)
 
 	if err != nil {
 		return err
@@ -115,8 +117,19 @@ func resourceHostCreate(d *schema.ResourceData, meta interface{}) error {
 }
 
 func resourceHostRead(d *schema.ResourceData, meta interface{}) error {
-        client := meta.(*chkp.Client)
+  client := meta.(*chkp.Client)
+
 	id, err := client.ShowHost(d.Id())
+  if err != nil {
+    status := err.Error()
+    if (status == "404") {
+          // If the object is not found remove it from state
+          d.SetId("")
+          return nil
+    } else {
+      return err
+    }
+  }
 
 	readHost := chkp.Host{}
   json.Unmarshal(id, &readHost)
@@ -125,9 +138,7 @@ func resourceHostRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("name", readHost.Name)
 	d.Set("ipv4address", readHost.Ipv4address)
   d.Set("natsettings", flattenHostSettings(readHost.NatSettings))
-	if err != nil {
-		return err
-	}
+
 	return nil
 }
 
@@ -183,15 +194,22 @@ func resourceHostUpdate(d *schema.ResourceData, meta interface{}) error {
 }
 
 func resourceHostDelete(d *schema.ResourceData, meta interface{}) error {
-    client := meta.(*chkp.Client)
-	client.DeleteHost(d.Id())
-	return nil
-}
+  client := meta.(*chkp.Client)
+  used, err := client.CheckWhereUsed(d.Id())
+  if used > 0 {
+    client.WaitUntilNotUsed(d.Id())
+  }
+	result, err := client.DeleteHost(d.Id())
+  _ = result
+  if err != nil {
+		return err
+	  }
+    return nil
+  }
+
 
 func flattenHostSettings(host chkp.NatSettings) []interface{} {
 	result := make(map[string]interface{})
-
-
 		result["installon"] = host.Installon
     result["autorule"] = host.Autorule
     result["hidebehind"] = host.Hidebehind

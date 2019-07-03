@@ -120,7 +120,16 @@ func resourceApplicationSiteRead(d *schema.ResourceData, meta interface{}) error
         client := meta.(*chkp.Client)
   // Call the API to get ApplicationSite info
   id, err := client.ShowApplicationSite(d.Id())
-
+  if err != nil {
+    status := err.Error()
+    if (status == "404") {
+          // If the object is not found remove it from state
+          d.SetId("")
+          return nil
+    } else {
+      return err
+    }
+  }
 	readApplicationSite := chkp.ApplicationSiteResult{}
   json.Unmarshal(id, &readApplicationSite)
 	d.SetId(readApplicationSite.Uid)
@@ -157,9 +166,6 @@ func resourceApplicationSiteRead(d *schema.ResourceData, meta interface{}) error
 
   d.Set("tags", tag)
 
-	if err != nil {
-		return err
-	}
 	return nil
 }
 
@@ -257,8 +263,15 @@ func resourceApplicationSiteUpdate(d *schema.ResourceData, meta interface{}) err
 }
 
 func resourceApplicationSiteDelete(d *schema.ResourceData, meta interface{}) error {
-    client := meta.(*chkp.Client)
-	client.DeleteApplicationSite(d.Id())
-	return nil
-
+  client := meta.(*chkp.Client)
+  used, err := client.CheckWhereUsed(d.Id())
+  if used > 0 {
+    client.WaitUntilNotUsed(d.Id())
+  }
+	result, err := client.DeleteApplicationSite(d.Id())
+  _ = result
+  if err != nil {
+		return err
+	}
+  return nil
 }

@@ -221,7 +221,16 @@ func resourceAccessRulebaseRead(d *schema.ResourceData, meta interface{}) error 
         client := meta.(*chkp.Client)
   layer := d.Get("layer").(string)
   id, err := client.ShowAccessRulebase(d.Id(),layer)
-
+  if err != nil {
+    status := err.Error()
+    if (status == "404") {
+          // If the object is not found remove it from state
+          d.SetId("")
+          return nil
+    } else {
+      return err
+    }
+  }
 	readAccessRulebase := chkp.AccessRulebaseResult{}
   json.Unmarshal(id, &readAccessRulebase)
 	d.SetId(readAccessRulebase.Uid)
@@ -287,10 +296,6 @@ func resourceAccessRulebaseRead(d *schema.ResourceData, meta interface{}) error 
 
   d.Set("inlinelayer", inlinelayer)
 
-
-	if err != nil {
-		return err
-	}
 	return nil
 }
 

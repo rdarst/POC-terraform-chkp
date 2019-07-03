@@ -60,16 +60,22 @@ func resourceTagRead(d *schema.ResourceData, meta interface{}) error {
   client := meta.(*chkp.Client)
   // Call the API to get Tag info
   id, err := client.ShowTag(d.Id())
-
+  if err != nil {
+    status := err.Error()
+    if (status == "404") {
+          // If the object is not found remove it from state
+          d.SetId("")
+          return nil
+    } else {
+      return err
+    }
+  }
 	readTag := chkp.Tag{}
   json.Unmarshal(id, &readTag)
 	d.SetId(readTag.Uid)
 	d.Set("color", readTag.Color)
 	d.Set("name", readTag.Name)
 
-  if err != nil {
-		return err
-	}
 	return nil
 }
 

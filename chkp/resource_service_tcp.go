@@ -81,7 +81,16 @@ func resourceServiceTcpCreate(d *schema.ResourceData, meta interface{}) error {
 func resourceServiceTcpRead(d *schema.ResourceData, meta interface{}) error {
         client := meta.(*chkp.Client)
 	id, err := client.ShowServiceTcp(d.Id())
-
+  if err != nil {
+    status := err.Error()
+    if (status == "404") {
+          // If the object is not found remove it from state
+          d.SetId("")
+          return nil
+    } else {
+      return err
+    }
+  }
 	readServiceTcp := chkp.ServiceTcp{}
   json.Unmarshal(id, &readServiceTcp)
 	d.SetId(readServiceTcp.Uid)
@@ -92,9 +101,7 @@ func resourceServiceTcpRead(d *schema.ResourceData, meta interface{}) error {
   d.Set("sessiontimeout", readServiceTcp.SessionTimeout)
   d.Set("matchbysig", readServiceTcp.MatchBySig)
   d.Set("matchforany", readServiceTcp.MatchForAny)
-	if err != nil {
-		return err
-	}
+	
 	return nil
 }
 
@@ -124,8 +131,15 @@ func resourceServiceTcpUpdate(d *schema.ResourceData, meta interface{}) error {
 }
 
 func resourceServiceTcpDelete(d *schema.ResourceData, meta interface{}) error {
-    client := meta.(*chkp.Client)
-	client.DeleteServiceTcp(d.Id())
-	return nil
-
+  client := meta.(*chkp.Client)
+  used, err := client.CheckWhereUsed(d.Id())
+  if used > 0 {
+    client.WaitUntilNotUsed(d.Id())
+  }
+	result, err := client.DeleteServiceTcp(d.Id())
+  _ = result
+  if err != nil {
+		return err
+	}
+  return nil
 }

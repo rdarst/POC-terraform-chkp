@@ -56,16 +56,22 @@ func resourceDynamicObjectRead(d *schema.ResourceData, meta interface{}) error {
         client := meta.(*chkp.Client)
   // Call the API to get DynamicObject info
   id, err := client.ShowDynamicObject(d.Id())
-
+  if err != nil {
+    status := err.Error()
+    if (status == "404") {
+          // If the object is not found remove it from state
+          d.SetId("")
+          return nil
+    } else {
+      return err
+    }
+  }
 	readDynamicObject := chkp.DynamicObject{}
   json.Unmarshal(id, &readDynamicObject)
 	d.SetId(readDynamicObject.Uid)
 	d.Set("color", readDynamicObject.Color)
 	d.Set("name", readDynamicObject.Name)
 
-  if err != nil {
-		return err
-	}
 	return nil
 }
 
@@ -90,8 +96,15 @@ func resourceDynamicObjectUpdate(d *schema.ResourceData, meta interface{}) error
 }
 
 func resourceDynamicObjectDelete(d *schema.ResourceData, meta interface{}) error {
-    client := meta.(*chkp.Client)
-	client.DeleteDynamicObject(d.Id())
-	return nil
-
+  client := meta.(*chkp.Client)
+  used, err := client.CheckWhereUsed(d.Id())
+  if used > 0 {
+    client.WaitUntilNotUsed(d.Id())
+  }
+	result, err := client.DeleteDynamicObject(d.Id())
+  _ = result
+  if err != nil {
+		return err
+	}
+  return nil
 }

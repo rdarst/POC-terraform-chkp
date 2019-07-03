@@ -119,7 +119,7 @@ func resourceAccessLayerList() *schema.Resource {
                                            "accounting": {
                                                  Type:     schema.TypeBool,
                                                  Optional: true,
-                                                 Default:  false,
+                                                 //Default:  false,
                                            },
                                            "perconnection": {
                                                  Type:     schema.TypeBool,
@@ -277,6 +277,16 @@ return nil
 func resourceAccessLayerListRead(d *schema.ResourceData, meta interface{}) error {
   client := meta.(*chkp.Client)
   id, err := client.ShowAccessLayer(d.Id())
+  if err != nil {
+    status := err.Error()
+    if (status == "404") {
+          // If the object is not found remove it from state
+          d.SetId("")
+          return nil
+    } else {
+      return err
+    }
+  }
   readAccessLayer := chkp.AccessLayer{}
   json.Unmarshal(id, &readAccessLayer)
 	d.SetId(readAccessLayer.Uid)
@@ -418,9 +428,6 @@ func resourceAccessLayerListRead(d *schema.ResourceData, meta interface{}) error
           rulelist = append(rulelist, layerreturn)
   }
 
-	if err != nil {
-		return err
-	}
   d.Set("rulebase", rulelist)
 
   return nil

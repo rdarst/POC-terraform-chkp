@@ -94,7 +94,16 @@ func resourceAccessLayerCreate(d *schema.ResourceData, meta interface{}) error {
 func resourceAccessLayerRead(d *schema.ResourceData, meta interface{}) error {
         client := meta.(*chkp.Client)
 	id, err := client.ShowAccessLayer(d.Id())
-
+  if err != nil {
+    status := err.Error()
+    if (status == "404") {
+          // If the object is not found remove it from state
+          d.SetId("")
+          return nil
+    } else {
+      return err
+    }
+  }
 	readAccessLayer := chkp.AccessLayer{}
   json.Unmarshal(id, &readAccessLayer)
 	d.SetId(readAccessLayer.Uid)
@@ -106,9 +115,7 @@ func resourceAccessLayerRead(d *schema.ResourceData, meta interface{}) error {
   d.Set("mobileaccess", readAccessLayer.MobileAccess)
   d.Set("shared", readAccessLayer.Shared)
   d.Set("comments", readAccessLayer.Comments)
-  if err != nil {
-		return err
-	}
+  
 	return nil
 }
 

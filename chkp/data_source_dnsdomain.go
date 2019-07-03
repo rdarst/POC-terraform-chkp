@@ -41,7 +41,16 @@ func dataSourceDNSDomainRead(d *schema.ResourceData, meta interface{}) error {
   name := d.Get("name").(string)
   // Call the API to get DNSDomain info
   id, err := client.ShowDNSDomain(name)
-
+  if err != nil {
+    status := err.Error()
+    if (status == "404") {
+          // If the object is not found remove it from state
+          d.SetId("")
+          return nil
+    } else {
+      return err
+    }
+  }
 	readDNSDomain := chkp.DNSDomain{}
   json.Unmarshal(id, &readDNSDomain)
 	d.SetId(readDNSDomain.Uid)
@@ -49,8 +58,5 @@ func dataSourceDNSDomainRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("name", readDNSDomain.Name)
   d.Set("issubdomain", readDNSDomain.Issubdomain)
 
-  if err != nil {
-		return err
-	}
 	return nil
 }

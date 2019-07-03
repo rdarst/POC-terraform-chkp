@@ -43,7 +43,16 @@ func dataSourceAddressRangeRead(d *schema.ResourceData, meta interface{}) error 
   name := d.Get("name").(string)
 
 	id, err := client.ReadAddressRangeData(name)
-
+  if err != nil {
+    status := err.Error()
+    if (status == "404") {
+          // If the object is not found remove it from state
+          d.SetId("")
+          return nil
+    } else {
+      return err
+    }
+  }
 	readAddressRange := chkp.AddressRange{}
   json.Unmarshal(id, &readAddressRange)
 	d.SetId(readAddressRange.Uid)
@@ -51,8 +60,6 @@ func dataSourceAddressRangeRead(d *schema.ResourceData, meta interface{}) error 
 	d.Set("name", readAddressRange.Name)
 	d.Set("ipv4addressfirst", readAddressRange.Ipv4addressfirst)
   d.Set("ipv4addresslast", readAddressRange.Ipv4addresslast)
-	if err != nil {
-		return err
-	}
+	
 	return nil
 }

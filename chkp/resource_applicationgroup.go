@@ -71,7 +71,16 @@ func resourceApplicationGroupRead(d *schema.ResourceData, meta interface{}) erro
         client := meta.(*chkp.Client)
   // Call the API to get ApplicationGroup info
   id, err := client.ShowApplicationGroup(d.Id())
-
+  if err != nil {
+    status := err.Error()
+    if (status == "404") {
+          // If the object is not found remove it from state
+          d.SetId("")
+          return nil
+    } else {
+      return err
+    }
+  }
 	readApplicationGroup := chkp.ApplicationGroup{}
   json.Unmarshal(id, &readApplicationGroup)
 	d.SetId(readApplicationGroup.Uid)
@@ -90,11 +99,7 @@ func resourceApplicationGroupRead(d *schema.ResourceData, meta interface{}) erro
   }
 
   d.Set("members", mem)
-  //d.Set("members").(*schema.Set).List()
 
-	if err != nil {
-		return err
-	}
 	return nil
 }
 
@@ -128,8 +133,15 @@ func resourceApplicationGroupUpdate(d *schema.ResourceData, meta interface{}) er
 }
 
 func resourceApplicationGroupDelete(d *schema.ResourceData, meta interface{}) error {
-    client := meta.(*chkp.Client)
-	client.DeleteApplicationGroup(d.Id())
-	return nil
-
+  client := meta.(*chkp.Client)
+  used, err := client.CheckWhereUsed(d.Id())
+  if used > 0 {
+    client.WaitUntilNotUsed(d.Id())
+  }
+	result, err := client.DeleteApplicationGroup(d.Id())
+  _ = result
+  if err != nil {
+		return err
+	}
+  return nil
 }

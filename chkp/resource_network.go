@@ -117,7 +117,16 @@ network.NatSettings = natconfig
 func resourceNetworkRead(d *schema.ResourceData, meta interface{}) error {
   client := meta.(*chkp.Client)
 	id, err := client.ShowNetwork(d.Id())
-
+  if err != nil {
+    status := err.Error()
+    if (status == "404") {
+          // If the object is not found remove it from state
+          d.SetId("")
+          return nil
+    } else {
+      return err
+    }
+  }
 	var readnetwork chkp.Network
   json.Unmarshal(id, &readnetwork)
 	d.SetId(readnetwork.Uid)
@@ -126,9 +135,6 @@ func resourceNetworkRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("subnet4", readnetwork.Subnet4)
   d.Set("masklength4", readnetwork.Masklength4)
   d.Set("natsettings", flattenNatSettings(readnetwork.NatSettings))
-	if err != nil {
-		return err
-	}
 	return nil
 }
 
@@ -184,15 +190,21 @@ func resourceNetworkUpdate(d *schema.ResourceData, meta interface{}) error {
 }
 
 func resourceNetworkDelete(d *schema.ResourceData, meta interface{}) error {
-    client := meta.(*chkp.Client)
-	client.DeleteNetwork(d.Id())
-	return nil
-
+  client := meta.(*chkp.Client)
+  used, err := client.CheckWhereUsed(d.Id())
+  if used > 0 {
+    client.WaitUntilNotUsed(d.Id())
+  }
+	result, err := client.DeleteNetwork(d.Id())
+  _ = result
+  if err != nil {
+		return err
+	}
+  return nil
 }
 
 func flattenNatSettings(nat chkp.NatSettings) []interface{} {
 	result := make(map[string]interface{})
-
 		result["installon"] = nat.Installon
     result["autorule"] = nat.Autorule
     result["hidebehind"] = nat.Hidebehind

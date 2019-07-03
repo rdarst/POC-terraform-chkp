@@ -56,16 +56,21 @@ func resourceSecurityZoneRead(d *schema.ResourceData, meta interface{}) error {
   client := meta.(*chkp.Client)
   // Call the API to get SecurityZone info
   id, err := client.ShowSecurityZone(d.Id())
-
+  if err != nil {
+    status := err.Error()
+    if (status == "404") {
+          // If the object is not found remove it from state
+          d.SetId("")
+          return nil
+    } else {
+      return err
+    }
+  }
 	readSecurityZone := chkp.SecurityZone{}
   json.Unmarshal(id, &readSecurityZone)
 	d.SetId(readSecurityZone.Uid)
 	d.Set("color", readSecurityZone.Color)
 	d.Set("name", readSecurityZone.Name)
-
-  if err != nil {
-		return err
-	}
 	return nil
 }
 
@@ -90,8 +95,15 @@ func resourceSecurityZoneUpdate(d *schema.ResourceData, meta interface{}) error 
 }
 
 func resourceSecurityZoneDelete(d *schema.ResourceData, meta interface{}) error {
-    client := meta.(*chkp.Client)
-	client.DeleteSecurityZone(d.Id())
-	return nil
-
+  client := meta.(*chkp.Client)
+  used, err := client.CheckWhereUsed(d.Id())
+  if used > 0 {
+    client.WaitUntilNotUsed(d.Id())
+  }
+	result, err := client.DeleteSecurityZone(d.Id())
+  _ = result
+  if err != nil {
+		return err
+	}
+  return nil
 }

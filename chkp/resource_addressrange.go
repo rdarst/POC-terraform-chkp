@@ -122,7 +122,16 @@ func resourceAddressRangeCreate(d *schema.ResourceData, meta interface{}) error 
 func resourceAddressRangeRead(d *schema.ResourceData, meta interface{}) error {
         client := meta.(*chkp.Client)
 	id, err := client.ShowAddressRange(d.Id())
-
+  if err != nil {
+    status := err.Error()
+    if (status == "404") {
+          // If the object is not found remove it from state
+          d.SetId("")
+          return nil
+    } else {
+      return err
+    }
+  }
 	readAddressRange := chkp.AddressRange{}
   json.Unmarshal(id, &readAddressRange)
 	d.SetId(readAddressRange.Uid)
@@ -131,9 +140,7 @@ func resourceAddressRangeRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("ipv4addressfirst", readAddressRange.Ipv4addressfirst)
   d.Set("ipv4addresslast", readAddressRange.Ipv4addresslast)
   d.Set("natsettings", flattenAddressRangeSettings(readAddressRange.NatSettings))
-	if err != nil {
-		return err
-	}
+	
 	return nil
 }
 
@@ -190,9 +197,17 @@ func resourceAddressRangeUpdate(d *schema.ResourceData, meta interface{}) error 
 }
 
 func resourceAddressRangeDelete(d *schema.ResourceData, meta interface{}) error {
-    client := meta.(*chkp.Client)
-	client.DeleteAddressRange(d.Id())
-	return nil
+  client := meta.(*chkp.Client)
+  used, err := client.CheckWhereUsed(d.Id())
+  if used > 0 {
+    client.WaitUntilNotUsed(d.Id())
+  }
+	result, err := client.DeleteAddressRange(d.Id())
+  _ = result
+  if err != nil {
+		return err
+	}
+  return nil
 }
 
 func flattenAddressRangeSettings(addressrange chkp.NatSettings) []interface{} {

@@ -62,6 +62,30 @@ func resourceAccessRulebaseList() *schema.Resource {
                           Optional: true,
                           Computed: true,
                   },
+                  "appandurl": {
+                          Type:     schema.TypeBool,
+                          Optional: true,
+                          Default: false,
+                            },
+                  "contentawareness": {
+                          Type:     schema.TypeBool,
+                          Optional: true,
+                          Default: false,
+                  },
+                  "firewall": {
+                          Type:     schema.TypeBool,
+                          Optional: true,
+                          Default: true,
+                  },
+                  "mobileaccess": {
+                          Type:     schema.TypeBool,
+                          Optional: true,
+                          Default: false,
+                  },
+                  "comments": {
+                          Type:     schema.TypeString,
+                          Optional: true,
+                  },
 
 						            "rulebase": {
                           Type:     schema.TypeList,
@@ -182,9 +206,21 @@ func resourceAccessRulebaseListCreate(d *schema.ResourceData, meta interface{}) 
   if err != nil {
 		return err
 	}
+  // Setup the cleanup rule and setup the layer settings for urlf/mobile access/etc
   layer := d.Get("name").(string)+" Network"
   layeruid, err := client.ReadLayerNametoUID(layer)
   d.Set("layeruid", layeruid)
+  var accesslayer = chkp.AccessLayerUpdate{}
+  accesslayer.Name = layer
+	accesslayer.AppAndUrl = d.Get("appandurl").(bool)
+  accesslayer.ContentAwareness = d.Get("contentawareness").(bool)
+  accesslayer.Firewall = d.Get("firewall").(bool)
+  accesslayer.MobileAccess = d.Get("mobileaccess").(bool)
+  accesslayer.Color = d.Get("color").(string)
+  accesslayer.Comments = d.Get("comments").(string)
+	id2, err2 := client.SetAccessLayer(accesslayer)
+  _ =id2
+  if err2 != nil {return err2}
   //Get Default Cleanup rule UID that was just created
   getcleanupid, err := client.ShowAccessRulebaseByName("Cleanup rule", layer)
   readLayer := chkp.AccessLayer{}
@@ -301,7 +337,16 @@ return nil
 func resourceAccessRulebaseListRead(d *schema.ResourceData, meta interface{}) error {
   client := meta.(*chkp.Client)
   id, err := client.ShowPolicyPackage(d.Id())
-
+  if err != nil {
+    status := err.Error()
+    if (status == "404") {
+          // If the object is not found remove it from state
+          d.SetId("")
+          return nil
+    } else {
+      return err
+    }
+  }
 	readPolicyPackage := chkp.PolicyPackage{}
   json.Unmarshal(id, &readPolicyPackage)
 	d.SetId(readPolicyPackage.Uid)
@@ -313,19 +358,31 @@ func resourceAccessRulebaseListRead(d *schema.ResourceData, meta interface{}) er
   d.Set("threatprevention", readPolicyPackage.ThreatPrevention)
   d.Set("qospolicytype", readPolicyPackage.QosPolicyType)
 
-	if err != nil {
+  // Set the Layer blade settings
+  layer := d.Get("name").(string)+" Network"
+  layeruid, err := client.ReadLayerNametoUID(layer)
+  id2, err := client.ShowAccessLayer(layeruid)
+  d.Set("layeruid", layeruid)
+	readAccessLayer := chkp.AccessLayer{}
+  json.Unmarshal(id2, &readAccessLayer)
+	d.Set("appandurl", readAccessLayer.AppAndUrl)
+  d.Set("contentawareness", readAccessLayer.ContentAwareness)
+  d.Set("firewall", readAccessLayer.Firewall)
+  d.Set("mobileaccess", readAccessLayer.MobileAccess)
+  d.Set("comments", readAccessLayer.Comments)
+  if err != nil {
 		return err
 	}
+
   // Set API limit on the number of records returned default is 50 max is 500
   limit := 100
-  layer := d.Get("name").(string)+" Network"
-  id2, err := client.ShowAccessRulebaseList(layer, limit, 0)
+  id3, err := client.ShowAccessRulebaseList(layer, limit, 0)
 
   readAccessRulebase := chkp.AccessRulebaseResultRead{}
-  json.Unmarshal(id2, &readAccessRulebase)
+  json.Unmarshal(id3, &readAccessRulebase)
 
   var result map[string]interface{}
-  json.Unmarshal(id2, &result)
+  json.Unmarshal(id3, &result)
 
   rules := result["rulebase"].([]interface{})
   total := readAccessRulebase.Total
@@ -341,11 +398,11 @@ func resourceAccessRulebaseListRead(d *schema.ResourceData, meta interface{}) er
   if total > to {
   done := 0
   for done < 1 {
-    id3, err := client.ShowAccessRulebaseList(layer, limit, offset)
+    id4, err := client.ShowAccessRulebaseList(layer, limit, offset)
     var resultappend map[string]interface{}
     readAccessRulebaseappend := chkp.AccessRulebaseResultRead{}
-    json.Unmarshal(id3, &resultappend)
-    json.Unmarshal(id3, &readAccessRulebaseappend)
+    json.Unmarshal(id4, &resultappend)
+    json.Unmarshal(id4, &readAccessRulebaseappend)
     rules := resultappend["rulebase"].([]interface{})
     for t := range rules {
       rulelistread = append(rulelistread, rules[t].(map[string]interface{}))
@@ -492,6 +549,29 @@ func resourceAccessRulebaseListUpdate(d *schema.ResourceData, meta interface{}) 
     return err
    }
   }
+  updatelayer := false
+  var accesslayer2 = chkp.AccessLayerUpdate{}
+  if d.HasChange("appandurl") { accesslayer2.AppAndUrl = d.Get("appandurl").(bool)
+    updatelayer = true}
+  if d.HasChange("contentawareness") { accesslayer2.ContentAwareness = d.Get("contentawareness").(bool)
+    updatelayer = true}
+  if d.HasChange("firewall") { accesslayer2.Firewall = d.Get("firewall").(bool)
+    updatelayer = true}
+  if d.HasChange("mobileaccess") { accesslayer2.MobileAccess = d.Get("mobileaccess").(bool)
+    updatelayer = true}
+  if d.HasChange("color") { accesslayer2.Color = d.Get("color").(string)
+    updatelayer = true}
+  if d.HasChange("comments") { accesslayer2.Comments = d.Get("comments").(string)
+    updatelayer = true}
+
+    if updatelayer {
+      accesslayer2.Uid = d.Get("layeruid").(string)
+    	id5, err := client.SetAccessLayer(accesslayer2)
+      _ = id5
+      if err != nil {
+        return err
+       }
+    }
 
   if updatepolicy  {
   policypackage.Uid = d.Get("uid").(string)

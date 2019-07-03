@@ -37,15 +37,22 @@ func dataSourceServiceTcpRead(d *schema.ResourceData, meta interface{}) error {
   name := d.Get("name").(string)
 
 	id, err := client.ReadServiceTcpData(name)
-
+  if err != nil {
+    status := err.Error()
+    if (status == "404") {
+          // If the object is not found remove it from state
+          d.SetId("")
+          return nil
+    } else {
+      return err
+    }
+  }
 	readServiceTcp := chkp.ServiceTcp{}
   json.Unmarshal(id, &readServiceTcp)
 	d.SetId(readServiceTcp.Uid)
   d.Set("uid", readServiceTcp.Uid)
 	d.Set("name", readServiceTcp.Name)
 	d.Set("port", readServiceTcp.Port)
-	if err != nil {
-		return err
-	}
+
 	return nil
 }

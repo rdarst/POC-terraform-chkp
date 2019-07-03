@@ -162,7 +162,14 @@ func resourceAccessNatRuleListRead(d *schema.ResourceData, meta interface{}) err
   packageuid := d.Get("package").(string)
   id, err := client.ShowNATRulebaseList(packageuid, limit, 0)
   if err != nil {
-    return err
+    status := err.Error()
+    if (status == "404") {
+          // If the object is not found remove it from state
+          d.SetId("")
+          return nil
+    } else {
+      return err
+    }
   }
   readNATRulebase := chkp.NATRulebaseResultRead{}
   json.Unmarshal(id, &readNATRulebase)

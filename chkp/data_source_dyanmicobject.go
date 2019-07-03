@@ -37,15 +37,21 @@ func dataSourceDynamicObjectRead(d *schema.ResourceData, meta interface{}) error
   name := d.Get("name").(string)
   // Call the API to get DynamicObject info
   id, err := client.ShowDynamicObject(name)
-
+  if err != nil {
+    status := err.Error()
+    if (status == "404") {
+          // If the object is not found remove it from state
+          d.SetId("")
+          return nil
+    } else {
+      return err
+    }
+  }
 	readDynamicObject := chkp.DynamicObject{}
   json.Unmarshal(id, &readDynamicObject)
 	d.SetId(readDynamicObject.Uid)
 	d.Set("color", readDynamicObject.Color)
 	d.Set("name", readDynamicObject.Name)
 
-  if err != nil {
-		return err
-	}
 	return nil
 }

@@ -38,15 +38,22 @@ func dataSourceHostRead(d *schema.ResourceData, meta interface{}) error {
   name := d.Get("name").(string)
 
 	id, err := client.ReadHostData(name)
-
+  if err != nil {
+    status := err.Error()
+    if (status == "404") {
+          // If the object is not found remove it from state
+          d.SetId("")
+          return nil
+    } else {
+      return err
+    }
+  }
 	readHost := chkp.Host{}
   json.Unmarshal(id, &readHost)
 	d.SetId(readHost.Uid)
   d.Set("uid", readHost.Uid)
 	d.Set("name", readHost.Name)
 	d.Set("ipv4address", readHost.Ipv4address)
-	if err != nil {
-		return err
-	}
+	
 	return nil
 }

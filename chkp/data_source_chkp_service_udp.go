@@ -37,15 +37,22 @@ func dataSourceServiceUdpRead(d *schema.ResourceData, meta interface{}) error {
   name := d.Get("name").(string)
 
 	id, err := client.ReadServiceUdpData(name)
-
+  if err != nil {
+    status := err.Error()
+    if (status == "404") {
+          // If the object is not found remove it from state
+          d.SetId("")
+          return nil
+    } else {
+      return err
+    }
+  }
 	readServiceUdp := chkp.ServiceUdp{}
   json.Unmarshal(id, &readServiceUdp)
 	d.SetId(readServiceUdp.Uid)
   d.Set("uid", readServiceUdp.Uid)
 	d.Set("name", readServiceUdp.Name)
 	d.Set("port", readServiceUdp.Port)
-	if err != nil {
-		return err
-	}
+	
 	return nil
 }

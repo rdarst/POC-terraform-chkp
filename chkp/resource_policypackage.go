@@ -82,7 +82,16 @@ func resourcePolicyPackageCreate(d *schema.ResourceData, meta interface{}) error
 func resourcePolicyPackageRead(d *schema.ResourceData, meta interface{}) error {
         client := meta.(*chkp.Client)
 	id, err := client.ShowPolicyPackage(d.Id())
-
+  if err != nil {
+    status := err.Error()
+    if (status == "404") {
+          // If the object is not found remove it from state
+          d.SetId("")
+          return nil
+    } else {
+      return err
+    }
+  }
 	readPolicyPackage := chkp.PolicyPackage{}
   json.Unmarshal(id, &readPolicyPackage)
 	d.SetId(readPolicyPackage.Uid)
@@ -93,9 +102,7 @@ func resourcePolicyPackageRead(d *schema.ResourceData, meta interface{}) error {
   d.Set("qos", readPolicyPackage.Qos)
   d.Set("threatprevention", readPolicyPackage.ThreatPrevention)
   d.Set("qospolicytype", readPolicyPackage.QosPolicyType)
-	if err != nil {
-		return err
-	}
+	
 	return nil
 }
 

@@ -81,6 +81,16 @@ func resourceServiceUdpCreate(d *schema.ResourceData, meta interface{}) error {
 func resourceServiceUdpRead(d *schema.ResourceData, meta interface{}) error {
         client := meta.(*chkp.Client)
 	id, err := client.ShowServiceUdp(d.Id())
+  if err != nil {
+    status := err.Error()
+    if (status == "404") {
+          // If the object is not found remove it from state
+          d.SetId("")
+          return nil
+    } else {
+      return err
+    }
+  }
 
 	readServiceUdp := chkp.ServiceUdp{}
   json.Unmarshal(id, &readServiceUdp)
@@ -92,9 +102,7 @@ func resourceServiceUdpRead(d *schema.ResourceData, meta interface{}) error {
   d.Set("sessiontimeout", readServiceUdp.SessionTimeout)
   d.Set("matchbysig", readServiceUdp.MatchBySig)
   d.Set("matchforany", readServiceUdp.MatchForAny)
-	if err != nil {
-		return err
-	}
+	
 	return nil
 }
 
@@ -124,8 +132,15 @@ func resourceServiceUdpUpdate(d *schema.ResourceData, meta interface{}) error {
 }
 
 func resourceServiceUdpDelete(d *schema.ResourceData, meta interface{}) error {
-    client := meta.(*chkp.Client)
-	client.DeleteServiceUdp(d.Id())
-	return nil
-
+  client := meta.(*chkp.Client)
+  used, err := client.CheckWhereUsed(d.Id())
+  if used > 0 {
+    client.WaitUntilNotUsed(d.Id())
+  }
+	result, err := client.DeleteServiceUdp(d.Id())
+  _ = result
+  if err != nil {
+		return err
+	}
+  return nil
 }
