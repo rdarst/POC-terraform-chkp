@@ -10,6 +10,10 @@ user = ''
 password = ''
 mgmtserverip = ''
 
+if len(sys.argv) <= 6:
+   print 'Error - Format should be - login.py -u <username> -p <password> -s <mgmt_server_ip>'
+   exit(1)
+
 try:
    opts, args = getopt.getopt(sys.argv[1:],"u:p:s:", ['usr=','pass=','serverip=', 'help'])
 except getopt.GetoptError:
