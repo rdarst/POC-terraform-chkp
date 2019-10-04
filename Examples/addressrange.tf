@@ -7,7 +7,8 @@ resource "chkp_addressrange" "testaddressrange" {
       autorule = true
       hidebehind = "gateway"
       method = "hide"
-      installon = "All" }
+      installon = "All" 
+            }
         }
 
 resource "chkp_addressrange" "mytestaddressrange" {
