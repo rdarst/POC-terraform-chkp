@@ -1,8 +1,7 @@
 resource "chkp_accessnatlist" "InitialNATRules" {
       package = "${chkp_accessrulebaselist.InitialRules.uid}"
 
-          natlist {
-                enabled = true
+          natlist {         
                 originalsource = "${chkp_host.jumphost.name}"
                 originaldestination = "${chkp_host.ubuntu1.name}"
                 originalservice = "http"
@@ -14,7 +13,6 @@ resource "chkp_accessnatlist" "InitialNATRules" {
                 method = "hide"
                                 }
           natlist {
-                enabled = true
                 originalsource = "${chkp_host.jumphost.name}"
                 originaldestination = "${chkp_host.ubuntu1.name}"
                 originalservice = "https"
@@ -27,7 +25,6 @@ resource "chkp_accessnatlist" "InitialNATRules" {
                                 }
 
             natlist {
-                  enabled = true
                   originalsource = "${chkp_host.jumphost.name}"
                   originaldestination = "${chkp_host.ubuntu1.name}"
                   originalservice = "ftp"
@@ -41,7 +38,6 @@ resource "chkp_accessnatlist" "InitialNATRules" {
                                   }
 
             natlist {
-                  enabled = true
                   originalsource = "${chkp_host.jumphost.name}"
                   originaldestination = "${chkp_host.ubuntu1.name}"
                   originalservice = "smtp"
@@ -52,7 +48,4 @@ resource "chkp_accessnatlist" "InitialNATRules" {
                   enabled = true
                   method = "static"
                                   }
-
-
-
                               }
